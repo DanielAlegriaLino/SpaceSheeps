@@ -1,0 +1,6 @@
+space_debris
+satellites
+asteroids
+missile
+rockets
+spaceman

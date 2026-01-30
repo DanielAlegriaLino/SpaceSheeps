@@ -1,0 +1,3 @@
+space_debris
+statelites
+asteroids

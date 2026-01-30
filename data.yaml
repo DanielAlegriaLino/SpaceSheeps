@@ -1,0 +1,19 @@
+# YOLO Dataset Configuration for Space Debris Detection
+
+# Paths (relative to this yaml file)
+path: .  # dataset root dir
+train: train  # train images (relative to 'path')
+val: train  # val images (relative to 'path') - using train as val since no separate val set
+
+# Classes
+names:
+  0: space_debris
+  1: satellites
+  2: asteroids
+  3: missile
+  4: rockets
+  5: spaceman
+
+# Number of classes
+nc: 6
+
