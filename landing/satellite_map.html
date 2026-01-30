@@ -456,7 +456,7 @@
 
         <div class="field">
             <label>N2YO API Key</label>
-            <input type="text" id="apiKey" value="4GULL3-JSKLBH-W8J5TM-5NCI">
+            <input type="text" id="apiKey" value="KKPFNP-MBTEZH-DRXW8E-5NCO">
         </div>
 
         <div class="field">
@@ -886,7 +886,7 @@
             const obsAltKm = alt / 1000.0;
 
             try {
-                const apiUrl = `/api/above/${lat}/${lon}/${alt}/${radius}/${category}&apiKey=${apiKey}`;
+                const apiUrl = `/api/above/${lat}/${lon}/${alt}/${radius}/${category}?apiKey=${apiKey}`;
                 const resp = await fetch(apiUrl);
                 if (!resp.ok) throw new Error(`HTTP ${resp.status}`);
                 const data = await resp.json();
