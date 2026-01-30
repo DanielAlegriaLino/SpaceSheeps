@@ -1,0 +1,626 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Satellite Proximity Alert</title>
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+
+    body {
+      font-family: 'Courier New', monospace;
+      background: #0a0e17;
+      color: #c8d6e5;
+      min-height: 100vh;
+    }
+
+    header {
+      text-align: center;
+      padding: 2rem 1rem 1rem;
+      border-bottom: 1px solid #1e2a3a;
+    }
+
+    header h1 {
+      font-size: 1.6rem;
+      color: #00d2ff;
+      letter-spacing: 2px;
+    }
+
+    header p {
+      color: #6b7b8d;
+      margin-top: 0.4rem;
+      font-size: 0.85rem;
+    }
+
+    .container {
+      max-width: 900px;
+      margin: 0 auto;
+      padding: 1.5rem;
+    }
+
+    /* Observer panel */
+    .observer-panel {
+      background: #111927;
+      border: 1px solid #1e2a3a;
+      border-radius: 8px;
+      padding: 1.2rem;
+      margin-bottom: 1.5rem;
+    }
+
+    .observer-panel h2 {
+      font-size: 0.9rem;
+      color: #00d2ff;
+      margin-bottom: 0.8rem;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+    }
+
+    .observer-fields {
+      display: flex;
+      gap: 1rem;
+      flex-wrap: wrap;
+      align-items: end;
+    }
+
+    .field {
+      display: flex;
+      flex-direction: column;
+      gap: 0.3rem;
+    }
+
+    .field label {
+      font-size: 0.75rem;
+      color: #6b7b8d;
+      text-transform: uppercase;
+    }
+
+    .field input, .field select {
+      background: #0a0e17;
+      border: 1px solid #1e2a3a;
+      color: #c8d6e5;
+      padding: 0.5rem 0.7rem;
+      border-radius: 4px;
+      font-family: inherit;
+      font-size: 0.85rem;
+      width: 130px;
+    }
+
+    .field input:focus, .field select:focus {
+      outline: none;
+      border-color: #00d2ff;
+    }
+
+    .btn {
+      background: #00d2ff;
+      color: #0a0e17;
+      border: none;
+      padding: 0.55rem 1.2rem;
+      border-radius: 4px;
+      font-family: inherit;
+      font-size: 0.85rem;
+      font-weight: bold;
+      cursor: pointer;
+      letter-spacing: 1px;
+      text-transform: uppercase;
+    }
+
+    .btn:hover { background: #00b8e6; }
+    .btn:disabled { background: #2a3a4a; color: #6b7b8d; cursor: not-allowed; }
+
+    .btn-secondary {
+      background: transparent;
+      color: #00d2ff;
+      border: 1px solid #00d2ff;
+    }
+
+    .btn-secondary:hover { background: rgba(0, 210, 255, 0.1); }
+
+    /* Alert banner */
+    .alert-banner {
+      display: none;
+      background: #1a0a0a;
+      border: 1px solid #ff4444;
+      border-radius: 8px;
+      padding: 1rem 1.2rem;
+      margin-bottom: 1.5rem;
+      animation: pulse-border 2s infinite;
+    }
+
+    .alert-banner.visible { display: block; }
+
+    .alert-banner h3 {
+      color: #ff4444;
+      font-size: 0.95rem;
+      margin-bottom: 0.4rem;
+    }
+
+    .alert-banner p {
+      font-size: 0.85rem;
+      color: #e8a0a0;
+    }
+
+    @keyframes pulse-border {
+      0%, 100% { border-color: #ff4444; }
+      50% { border-color: #ff8888; }
+    }
+
+    /* Status */
+    .status {
+      text-align: center;
+      padding: 2rem;
+      color: #6b7b8d;
+      font-size: 0.85rem;
+    }
+
+    .status.error { color: #ff4444; }
+
+    /* Satellite table */
+    .sat-table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 0.8rem;
+    }
+
+    .sat-table th {
+      text-align: left;
+      color: #6b7b8d;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+      font-size: 0.7rem;
+      padding: 0.6rem 0.5rem;
+      border-bottom: 1px solid #1e2a3a;
+    }
+
+    .sat-table td {
+      padding: 0.55rem 0.5rem;
+      border-bottom: 1px solid #111927;
+    }
+
+    .sat-table tr.close td { color: #ff4444; font-weight: bold; }
+    .sat-table tr.medium td { color: #ffaa00; }
+
+    .distance-badge {
+      display: inline-block;
+      padding: 0.15rem 0.5rem;
+      border-radius: 3px;
+      font-size: 0.75rem;
+      font-weight: bold;
+    }
+
+    .distance-badge.close { background: #3a0a0a; color: #ff4444; }
+    .distance-badge.medium { background: #2a1a00; color: #ffaa00; }
+    .distance-badge.far { background: #0a1a2a; color: #00d2ff; }
+
+    .summary {
+      margin-top: 1rem;
+      padding-top: 0.8rem;
+      border-top: 1px solid #1e2a3a;
+      font-size: 0.8rem;
+      color: #6b7b8d;
+    }
+
+    /* Distance line visualization */
+    .distance-line-container {
+      background: #111927;
+      border: 1px solid #1e2a3a;
+      border-radius: 8px;
+      padding: 1.2rem 1.2rem 0.6rem;
+      margin-bottom: 1.5rem;
+      overflow-x: auto;
+    }
+
+    .distance-line-container h2 {
+      font-size: 0.9rem;
+      color: #00d2ff;
+      margin-bottom: 1rem;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+    }
+
+    .distance-line-svg {
+      width: 100%;
+      min-width: 600px;
+    }
+
+    /* Settings */
+    .settings-row {
+      display: flex;
+      gap: 1rem;
+      align-items: center;
+      margin-top: 0.8rem;
+      flex-wrap: wrap;
+    }
+
+    .settings-row .field input {
+      width: 100px;
+    }
+
+    @media (max-width: 600px) {
+      .observer-fields { flex-direction: column; }
+      .field input, .field select { width: 100%; }
+      .sat-table { font-size: 0.7rem; }
+    }
+  </style>
+</head>
+<body>
+  <header>
+    <h1>Satellite Proximity Alert</h1>
+    <p>Detect nearby satellites based on your position</p>
+  </header>
+
+  <div class="container">
+    <!-- Observer position -->
+    <div class="observer-panel">
+      <h2>Observer Position</h2>
+      <div class="observer-fields">
+        <div class="field">
+          <label>Latitude</label>
+          <input type="number" id="lat" step="any" placeholder="41.39">
+        </div>
+        <div class="field">
+          <label>Longitude</label>
+          <input type="number" id="lon" step="any" placeholder="2.17">
+        </div>
+        <div class="field">
+          <label>Altitude (m)</label>
+          <input type="number" id="alt" value="0" step="any">
+        </div>
+        <div class="field">
+          <label>Category</label>
+          <select id="category">
+            <option value="0">All</option>
+            <option value="1">Brightest</option>
+            <option value="2">ISS</option>
+            <option value="3">Weather</option>
+            <option value="5">GPS</option>
+            <option value="6">Science</option>
+            <option value="12">Starlink</option>
+            <option value="15">Education</option>
+            <option value="18" selected>Amateur Radio</option>
+            <option value="22">GPS Operational</option>
+          </select>
+        </div>
+        <button class="btn btn-secondary" id="geolocateBtn" onclick="geolocate()">Use GPS</button>
+        <button class="btn" id="scanBtn" onclick="scan()">Scan</button>
+      </div>
+      <div class="settings-row">
+        <div class="field">
+          <label>Search Radius (°)</label>
+          <input type="number" id="radius" value="70" min="0" max="90">
+        </div>
+        <div class="field">
+          <label>Alert Threshold (km)</label>
+          <input type="number" id="threshold" value="1000" min="1">
+        </div>
+        <div class="field">
+          <label>N2YO API Key</label>
+          <input type="text" id="apiKey" value="4GULL3-JSKLBH-W8J5TM-5NCI" style="width:200px">
+        </div>
+      </div>
+    </div>
+
+    <!-- Alert banner -->
+    <div class="alert-banner" id="alertBanner">
+      <h3 id="alertTitle">PROXIMITY ALERT</h3>
+      <p id="alertMsg"></p>
+    </div>
+
+    <!-- Results -->
+    <div id="results">
+      <div class="status" id="statusMsg">Enter your position or use GPS, then press Scan.</div>
+    </div>
+  </div>
+
+  <script>
+    const EARTH_RADIUS_KM = 6371.0;
+
+    const PROXY = "";
+
+    /* ---- Geolocation ---- */
+    function geolocate() {
+      if (!navigator.geolocation) {
+        showStatus("Geolocation not supported by your browser.", true);
+        return;
+      }
+      const btn = document.getElementById("geolocateBtn");
+      btn.disabled = true;
+      btn.textContent = "Locating…";
+
+      navigator.geolocation.getCurrentPosition(
+        (pos) => {
+          document.getElementById("lat").value = pos.coords.latitude.toFixed(5);
+          document.getElementById("lon").value = pos.coords.longitude.toFixed(5);
+          if (pos.coords.altitude != null) {
+            document.getElementById("alt").value = pos.coords.altitude.toFixed(1);
+          }
+          btn.disabled = false;
+          btn.textContent = "Use GPS";
+        },
+        (err) => {
+          showStatus("Geolocation error: " + err.message, true);
+          btn.disabled = false;
+          btn.textContent = "Use GPS";
+        },
+        { enableHighAccuracy: true, timeout: 10000 }
+      );
+    }
+
+    /* ---- ECEF distance (ported from distance_to_satelites.py) ---- */
+    function computeDistanceKm(obsLat, obsLon, obsAltKm, satLat, satLon, satAltKm) {
+      const toRad = (d) => (d * Math.PI) / 180;
+      const oLatR = toRad(obsLat);
+      const oLonR = toRad(obsLon);
+      const sLatR = toRad(satLat);
+      const sLonR = toRad(satLon);
+
+      const rObs = EARTH_RADIUS_KM + obsAltKm;
+      const rSat = EARTH_RADIUS_KM + satAltKm;
+
+      const ox = rObs * Math.cos(oLatR) * Math.cos(oLonR);
+      const oy = rObs * Math.cos(oLatR) * Math.sin(oLonR);
+      const oz = rObs * Math.sin(oLatR);
+
+      const sx = rSat * Math.cos(sLatR) * Math.cos(sLonR);
+      const sy = rSat * Math.cos(sLatR) * Math.sin(sLonR);
+      const sz = rSat * Math.sin(sLatR);
+
+      return Math.sqrt((ox - sx) ** 2 + (oy - sy) ** 2 + (oz - sz) ** 2);
+    }
+
+    /* ---- UI helpers ---- */
+    function showStatus(msg, isError) {
+      const results = document.getElementById("results");
+      results.innerHTML = `<div class="status${isError ? " error" : ""}" id="statusMsg">${esc(msg)}</div>`;
+    }
+
+    function showAlert(closeSats, threshold) {
+      const banner = document.getElementById("alertBanner");
+      if (closeSats.length === 0) {
+        banner.classList.remove("visible");
+        return;
+      }
+      const nearest = closeSats[0];
+      document.getElementById("alertTitle").textContent =
+        `PROXIMITY ALERT — ${closeSats.length} satellite${closeSats.length > 1 ? "s" : ""} within ${threshold} km`;
+      document.getElementById("alertMsg").textContent =
+        `Nearest: ${nearest.name} (NORAD ${nearest.noradId}) at ${nearest.distance.toFixed(1)} km`;
+      banner.classList.add("visible");
+
+      // Browser notification
+      if (Notification.permission === "granted") {
+        new Notification("Satellite Proximity Alert", {
+          body: `${nearest.name} at ${nearest.distance.toFixed(1)} km`,
+        });
+      } else if (Notification.permission !== "denied") {
+        Notification.requestPermission();
+      }
+    }
+
+    /* ---- Main scan ---- */
+    async function scan() {
+      const lat = parseFloat(document.getElementById("lat").value);
+      const lon = parseFloat(document.getElementById("lon").value);
+      const alt = parseFloat(document.getElementById("alt").value) || 0;
+      const radius = parseInt(document.getElementById("radius").value) || 70;
+      const category = document.getElementById("category").value;
+      const threshold = parseFloat(document.getElementById("threshold").value) || 1000;
+      const apiKey = document.getElementById("apiKey").value.trim();
+
+      if (isNaN(lat) || isNaN(lon)) {
+        showStatus("Please enter valid latitude and longitude.", true);
+        return;
+      }
+
+      const btn = document.getElementById("scanBtn");
+      btn.disabled = true;
+      btn.textContent = "Scanning…";
+      showStatus("Fetching satellites from N2YO…", false);
+      document.getElementById("alertBanner").classList.remove("visible");
+
+      const obsAltKm = alt / 1000.0;
+
+      try {
+        const apiUrl =
+          `/api/above/${lat}/${lon}/${alt}/${radius}/${category}&apiKey=${apiKey}`;
+        const resp = await fetch(apiUrl);
+        if (!resp.ok) throw new Error(`HTTP ${resp.status}`);
+        const data = await resp.json();
+
+        const satellites = data.above || [];
+        if (satellites.length === 0) {
+          showStatus("No satellites found above your position.", false);
+          btn.disabled = false;
+          btn.textContent = "Scan";
+          return;
+        }
+
+        // Compute distances
+        const results = satellites.map((sat) => {
+          const satLat = sat.satlat || 0;
+          const satLon = sat.satlng || 0;
+          const satAltKm = sat.satalt || 0;
+          const distance = computeDistanceKm(lat, lon, obsAltKm, satLat, satLon, satAltKm);
+          return {
+            name: sat.satname || "Unknown",
+            noradId: sat.satid || "?",
+            satLat,
+            satLon,
+            satAltKm,
+            distance,
+          };
+        });
+
+        results.sort((a, b) => a.distance - b.distance);
+
+        // Only keep satellites within 10,000 km
+        const filtered = results.filter((r) => r.distance <= 10000);
+
+        if (filtered.length === 0) {
+          showStatus("No satellites found within 10,000 km.", false);
+          btn.disabled = false;
+          btn.textContent = "Scan";
+          return;
+        }
+
+        // Alert for close satellites
+        const closeSats = filtered.filter((r) => r.distance <= threshold);
+        showAlert(closeSats, threshold);
+
+        // Render table
+        renderTable(filtered, threshold);
+      } catch (err) {
+        showStatus("Error: " + err.message, true);
+      }
+
+      btn.disabled = false;
+      btn.textContent = "Scan";
+    }
+
+    function distanceBadgeClass(distance, threshold) {
+      if (distance <= threshold) return "close";
+      if (distance <= threshold * 3) return "medium";
+      return "far";
+    }
+
+    function renderDistanceLine(results, threshold) {
+      const lineResults = results.filter((r) => r.distance <= 1000);
+      if (lineResults.length === 0) return "";
+
+      const maxDist = Math.max(...lineResults.map((r) => r.distance), 1000);
+
+      // Build with a real DOM container + canvas-style tooltip
+      const containerId = "distline-" + Date.now();
+
+      let html = `<div class="distance-line-container">
+        <h2>Distance Line — ${lineResults.length} satellites within 1,000 km</h2>
+        <div id="${containerId}" style="position:relative;min-width:600px;height:120px;">
+          <svg style="width:100%;height:100%;" viewBox="0 0 850 120" xmlns="http://www.w3.org/2000/svg">`;
+
+      const svgW = 850, padL = 50, padR = 30;
+      const lineY = 60;
+      const lineW = svgW - padL - padR;
+      const scale = (d) => padL + (d / maxDist) * lineW;
+
+      // Axis
+      html += `<line x1="${padL}" y1="${lineY}" x2="${padL + lineW}" y2="${lineY}" stroke="#1e2a3a" stroke-width="2"/>`;
+
+      // Observer
+      html += `<circle cx="${padL}" cy="${lineY}" r="8" fill="#00d2ff"/>`;
+      html += `<text x="${padL}" y="${lineY - 18}" fill="#00d2ff" font-size="14" font-weight="bold" font-family="Courier New" text-anchor="middle">YOU</text>`;
+
+      // Threshold
+      if (threshold < maxDist) {
+        const tx = scale(threshold);
+        html += `<line x1="${tx}" y1="${lineY - 25}" x2="${tx}" y2="${lineY + 25}" stroke="#ff4444" stroke-width="1.5" stroke-dasharray="5,4"/>`;
+        html += `<text x="${tx}" y="${lineY + 45}" fill="#ff4444" font-size="13" font-weight="bold" font-family="Courier New" text-anchor="middle">${threshold} km</text>`;
+      }
+
+      // Tick marks — big text
+      const ticks = 5;
+      for (let i = 1; i <= ticks; i++) {
+        const d = (maxDist / ticks) * i;
+        const x = scale(d);
+        html += `<line x1="${x}" y1="${lineY - 6}" x2="${x}" y2="${lineY + 6}" stroke="#2a3a4a" stroke-width="1"/>`;
+        html += `<text x="${x}" y="${lineY + 28}" fill="#4a5a6a" font-size="13" font-weight="bold" font-family="Courier New" text-anchor="middle">${Math.round(d)}</text>`;
+      }
+
+      // Satellite dots (no labels — tooltip via JS)
+      lineResults.forEach((r, i) => {
+        const x = scale(r.distance);
+        const color = r.distance <= threshold ? "#ff4444" : r.distance <= threshold * 3 ? "#ffaa00" : "#00d2ff";
+        const dotR = r.distance <= threshold ? 6 : 4;
+        html += `<circle class="satdot" cx="${x}" cy="${lineY}" r="${dotR}" fill="${color}" opacity="0.9" data-i="${i}" style="cursor:pointer"/>`;
+      });
+
+      html += `</svg>`;
+
+      // Floating tooltip div (positioned absolutely over the SVG)
+      html += `<div id="${containerId}-tip" style="display:none;position:absolute;top:0;left:0;background:#0a0e17;border:2px solid #00d2ff;border-radius:6px;padding:10px 14px;pointer-events:none;z-index:10;white-space:nowrap;">
+        <div id="${containerId}-name" style="font-size:16px;font-weight:bold;color:#00d2ff;font-family:Courier New;"></div>
+        <div id="${containerId}-dist" style="font-size:22px;font-weight:bold;color:#fff;font-family:Courier New;margin-top:2px;"></div>
+        <div id="${containerId}-alt" style="font-size:12px;color:#6b7b8d;font-family:Courier New;"></div>
+      </div>`;
+
+      html += `</div></div>`;
+
+      // Store data on window so the global handler can access it
+      window._distLineData = lineResults.map(r => ({ name: r.name, distance: r.distance, satAltKm: r.satAltKm }));
+      window._distLineThreshold = threshold;
+      window._distLineContainerId = containerId;
+
+      return html;
+    }
+
+    function renderTable(results, threshold) {
+      const closeSats = results.filter((r) => r.distance <= threshold);
+
+      let html = renderDistanceLine(results, threshold);
+
+      html += `<table class="sat-table">
+        <thead><tr>
+          <th>Satellite</th><th>NORAD ID</th><th>Alt (km)</th><th>Distance (km)</th>
+        </tr></thead><tbody>`;
+
+      for (const r of results) {
+        const cls = r.distance <= threshold ? "close" : r.distance <= threshold * 3 ? "medium" : "";
+        const badgeCls = distanceBadgeClass(r.distance, threshold);
+        html += `<tr class="${cls}">
+          <td>${esc(r.name)}</td>
+          <td>${esc(String(r.noradId))}</td>
+          <td>${r.satAltKm.toFixed(1)}</td>
+          <td><span class="distance-badge ${badgeCls}">${r.distance.toFixed(1)}</span></td>
+        </tr>`;
+      }
+
+      html += `</tbody></table>`;
+      html += `<div class="summary">Total: ${results.length} satellites &nbsp;|&nbsp; Within alert threshold: ${closeSats.length}</div>`;
+
+      document.getElementById("results").innerHTML = html;
+      setupDistLineTooltips();
+    }
+
+    function setupDistLineTooltips() {
+      if (!window._distLineData) return;
+      const ctn = document.getElementById(window._distLineContainerId);
+      if (!ctn) return;
+      const tip = document.getElementById(window._distLineContainerId + "-tip");
+      const nameEl = document.getElementById(window._distLineContainerId + "-name");
+      const distEl = document.getElementById(window._distLineContainerId + "-dist");
+      const altEl = document.getElementById(window._distLineContainerId + "-alt");
+      const data = window._distLineData;
+      const threshold = window._distLineThreshold;
+
+      ctn.querySelectorAll(".satdot").forEach(dot => {
+        dot.addEventListener("mouseenter", function() {
+          const r = data[this.dataset.i];
+          const color = r.distance <= threshold ? "#ff4444" : r.distance <= threshold * 3 ? "#ffaa00" : "#00d2ff";
+          tip.style.borderColor = color;
+          nameEl.style.color = color;
+          nameEl.textContent = r.name;
+          distEl.textContent = r.distance.toFixed(1) + " km";
+          altEl.textContent = "Altitude: " + r.satAltKm.toFixed(0) + " km";
+          tip.style.display = "block";
+          const rect = ctn.getBoundingClientRect();
+          const dotRect = this.getBoundingClientRect();
+          let left = dotRect.left - rect.left + dotRect.width / 2 - tip.offsetWidth / 2;
+          left = Math.max(0, Math.min(left, rect.width - tip.offsetWidth));
+          tip.style.left = left + "px";
+          tip.style.top = "0px";
+          this.setAttribute("r", "8");
+        });
+        dot.addEventListener("mouseleave", function() {
+          tip.style.display = "none";
+          const r = data[this.dataset.i];
+          this.setAttribute("r", r.distance <= threshold ? "6" : "4");
+        });
+      });
+    }
+
+    function esc(s) {
+      const d = document.createElement("div");
+      d.textContent = s;
+      return d.innerHTML;
+    }
+  </script>
+</body>
+</html>
