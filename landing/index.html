@@ -12,64 +12,104 @@
       background: #0a0e17;
       color: #c8d6e5;
       min-height: 100vh;
+      display: flex;
+      flex-direction: column;
     }
 
+    /* ---- Header & Nav ---- */
     header {
       text-align: center;
-      padding: 2rem 1rem 1rem;
+      padding: 1.2rem 1rem 0;
       border-bottom: 1px solid #1e2a3a;
+      background: #0a0e17;
+      position: relative;
+      z-index: 100;
     }
 
     header h1 {
-      font-size: 1.6rem;
+      font-size: 1.5rem;
       color: #00d2ff;
-      letter-spacing: 2px;
+      letter-spacing: 3px;
+      text-transform: uppercase;
     }
 
-    header p {
+    header .subtitle {
       color: #6b7b8d;
-      margin-top: 0.4rem;
-      font-size: 0.85rem;
+      margin-top: 0.3rem;
+      font-size: 0.8rem;
     }
 
-    .container {
-      max-width: 900px;
-      margin: 0 auto;
-      padding: 1.5rem;
+    .nav-tabs {
+      display: flex;
+      justify-content: center;
+      gap: 0;
+      margin-top: 1rem;
     }
 
-    /* Observer panel */
-    .observer-panel {
-      background: #111927;
-      border: 1px solid #1e2a3a;
-      border-radius: 8px;
-      padding: 1.2rem;
-      margin-bottom: 1.5rem;
+    .nav-tab {
+      background: none;
+      border: none;
+      color: #6b7b8d;
+      font-family: inherit;
+      font-size: 0.8rem;
+      padding: 0.6rem 1.5rem;
+      cursor: pointer;
+      letter-spacing: 1px;
+      text-transform: uppercase;
+      border-bottom: 2px solid transparent;
+      transition: color 0.2s, border-color 0.2s;
     }
 
-    .observer-panel h2 {
-      font-size: 0.9rem;
+    .nav-tab:hover { color: #c8d6e5; }
+    .nav-tab.active {
       color: #00d2ff;
-      margin-bottom: 0.8rem;
+      border-bottom-color: #00d2ff;
+    }
+
+    /* ---- Layout ---- */
+    .app-layout {
+      display: flex;
+      flex: 1;
+      overflow: hidden;
+    }
+
+    /* Sidebar */
+    .sidebar {
+      width: 300px;
+      min-width: 300px;
+      background: #111927;
+      border-right: 1px solid #1e2a3a;
+      padding: 1rem;
+      overflow-y: auto;
+      display: flex;
+      flex-direction: column;
+      gap: 1rem;
+    }
+
+    .sidebar h2 {
+      font-size: 0.85rem;
+      color: #00d2ff;
+      margin-bottom: 0.5rem;
       text-transform: uppercase;
       letter-spacing: 1px;
     }
 
-    .observer-fields {
-      display: flex;
-      gap: 1rem;
-      flex-wrap: wrap;
-      align-items: end;
+    .panel {
+      background: #0d1420;
+      border: 1px solid #1e2a3a;
+      border-radius: 8px;
+      padding: 1rem;
     }
 
     .field {
       display: flex;
       flex-direction: column;
-      gap: 0.3rem;
+      gap: 0.25rem;
+      margin-bottom: 0.7rem;
     }
 
     .field label {
-      font-size: 0.75rem;
+      font-size: 0.7rem;
       color: #6b7b8d;
       text-transform: uppercase;
     }
@@ -78,34 +118,42 @@
       background: #0a0e17;
       border: 1px solid #1e2a3a;
       color: #c8d6e5;
-      padding: 0.5rem 0.7rem;
+      padding: 0.45rem 0.6rem;
       border-radius: 4px;
       font-family: inherit;
-      font-size: 0.85rem;
-      width: 130px;
+      font-size: 0.8rem;
+      width: 100%;
     }
 
     .field input:focus, .field select:focus {
       outline: none;
       border-color: #00d2ff;
+      box-shadow: 0 0 8px rgba(0, 210, 255, 0.2);
+    }
+
+    .btn-row {
+      display: flex;
+      gap: 0.5rem;
     }
 
     .btn {
       background: #00d2ff;
       color: #0a0e17;
       border: none;
-      padding: 0.55rem 1.2rem;
+      padding: 0.5rem 1rem;
       border-radius: 4px;
       font-family: inherit;
-      font-size: 0.85rem;
+      font-size: 0.8rem;
       font-weight: bold;
       cursor: pointer;
       letter-spacing: 1px;
       text-transform: uppercase;
+      flex: 1;
+      transition: background 0.2s, box-shadow 0.2s;
     }
 
-    .btn:hover { background: #00b8e6; }
-    .btn:disabled { background: #2a3a4a; color: #6b7b8d; cursor: not-allowed; }
+    .btn:hover { background: #00b8e6; box-shadow: 0 2px 12px rgba(0,210,255,0.3); }
+    .btn:disabled { background: #2a3a4a; color: #6b7b8d; cursor: not-allowed; box-shadow: none; }
 
     .btn-secondary {
       background: transparent;
@@ -115,14 +163,43 @@
 
     .btn-secondary:hover { background: rgba(0, 210, 255, 0.1); }
 
-    /* Alert banner */
+    /* Stats */
+    .stat-row {
+      display: flex;
+      justify-content: space-between;
+      padding: 0.4rem 0;
+      border-bottom: 1px solid rgba(30, 42, 58, 0.5);
+      font-size: 0.75rem;
+    }
+
+    .stat-row:last-child { border-bottom: none; }
+    .stat-label { color: #6b7b8d; text-transform: uppercase; }
+    .stat-value { color: #00d2ff; font-weight: bold; }
+    .stat-value.alert { color: #ff4444; }
+
+    /* Legend */
+    .legend-item {
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+      font-size: 0.65rem;
+      margin-bottom: 0.25rem;
+    }
+
+    .legend-dot {
+      width: 10px;
+      height: 10px;
+      border-radius: 50%;
+      flex-shrink: 0;
+    }
+
+    /* ---- Alert Banner ---- */
     .alert-banner {
       display: none;
       background: #1a0a0a;
       border: 1px solid #ff4444;
       border-radius: 8px;
-      padding: 1rem 1.2rem;
-      margin-bottom: 1.5rem;
+      padding: 0.8rem 1rem;
       animation: pulse-border 2s infinite;
     }
 
@@ -130,12 +207,12 @@
 
     .alert-banner h3 {
       color: #ff4444;
-      font-size: 0.95rem;
-      margin-bottom: 0.4rem;
+      font-size: 0.85rem;
+      margin-bottom: 0.3rem;
     }
 
     .alert-banner p {
-      font-size: 0.85rem;
+      font-size: 0.75rem;
       color: #e8a0a0;
     }
 
@@ -144,17 +221,29 @@
       50% { border-color: #ff8888; }
     }
 
-    /* Status */
-    .status {
-      text-align: center;
-      padding: 2rem;
-      color: #6b7b8d;
-      font-size: 0.85rem;
+    /* ---- Main Content Area ---- */
+    .main-content {
+      flex: 1;
+      overflow: hidden;
+      position: relative;
     }
 
-    .status.error { color: #ff4444; }
+    .view {
+      display: none;
+      width: 100%;
+      height: 100%;
+      position: absolute;
+      top: 0; left: 0;
+    }
 
-    /* Satellite table */
+    .view.active { display: block; }
+
+    /* ---- Table View ---- */
+    #view-table {
+      overflow-y: auto;
+      padding: 1rem;
+    }
+
     .sat-table {
       width: 100%;
       border-collapse: collapse;
@@ -169,15 +258,19 @@
       font-size: 0.7rem;
       padding: 0.6rem 0.5rem;
       border-bottom: 1px solid #1e2a3a;
+      position: sticky;
+      top: 0;
+      background: #0a0e17;
     }
 
     .sat-table td {
-      padding: 0.55rem 0.5rem;
+      padding: 0.5rem;
       border-bottom: 1px solid #111927;
     }
 
     .sat-table tr.close td { color: #ff4444; font-weight: bold; }
     .sat-table tr.medium td { color: #ffaa00; }
+    .sat-table tr:hover td { background: rgba(0, 210, 255, 0.05); }
 
     .distance-badge {
       display: inline-block;
@@ -191,68 +284,96 @@
     .distance-badge.medium { background: #2a1a00; color: #ffaa00; }
     .distance-badge.far { background: #0a1a2a; color: #00d2ff; }
 
-    .summary {
-      margin-top: 1rem;
-      padding-top: 0.8rem;
+    .table-summary {
+      margin-top: 0.8rem;
+      padding-top: 0.6rem;
       border-top: 1px solid #1e2a3a;
       font-size: 0.8rem;
       color: #6b7b8d;
     }
 
-    /* Distance line visualization */
-    .distance-line-container {
+    .table-empty {
+      text-align: center;
+      padding: 3rem;
+      color: #6b7b8d;
+      font-size: 0.85rem;
+    }
+
+    /* ---- 2D Map View ---- */
+    #view-map { background: #0a0e17; }
+    #worldMapCanvas { width: 100%; height: 100%; display: block; }
+
+    /* ---- 3D Globe View ---- */
+    #view-globe { background: #000; }
+
+    /* ---- Tooltip ---- */
+    .sat-tooltip {
+      position: fixed;
+      z-index: 200;
+      background: rgba(10, 14, 23, 0.98);
+      border: 2px solid #00d2ff;
+      border-radius: 6px;
+      padding: 0.7rem 0.9rem;
+      pointer-events: none;
+      display: none;
+      min-width: 180px;
+      box-shadow: 0 8px 24px rgba(0, 0, 0, 0.7);
+    }
+
+    .sat-tooltip.visible { display: block; }
+    .sat-tooltip .tt-name { font-size: 0.85rem; font-weight: bold; color: #00d2ff; margin-bottom: 0.3rem; }
+    .sat-tooltip .tt-info { font-size: 0.7rem; color: #c8d6e5; line-height: 1.4; }
+    .sat-tooltip .tt-dist { font-size: 1rem; font-weight: bold; color: #fff; margin-top: 0.3rem; }
+    .sat-tooltip .tt-dist.close { color: #ff4444; }
+    .sat-tooltip .tt-dist.medium { color: #ffaa00; }
+
+    /* ---- Status Bar ---- */
+    .status-bar {
       background: #111927;
-      border: 1px solid #1e2a3a;
-      border-radius: 8px;
-      padding: 1.2rem 1.2rem 0.6rem;
-      margin-bottom: 1.5rem;
-      overflow-x: auto;
-    }
-
-    .distance-line-container h2 {
-      font-size: 0.9rem;
-      color: #00d2ff;
-      margin-bottom: 1rem;
-      text-transform: uppercase;
-      letter-spacing: 1px;
-    }
-
-    .distance-line-svg {
-      width: 100%;
-      min-width: 600px;
-    }
-
-    /* Settings */
-    .settings-row {
+      border-top: 1px solid #1e2a3a;
+      padding: 0.4rem 1rem;
+      font-size: 0.75rem;
+      color: #6b7b8d;
       display: flex;
-      gap: 1rem;
+      justify-content: space-between;
       align-items: center;
-      margin-top: 0.8rem;
-      flex-wrap: wrap;
+      z-index: 100;
     }
 
-    .settings-row .field input {
-      width: 100px;
-    }
+    .status-bar.error { color: #ff4444; }
+    .status-bar .refresh-info { color: #4a5a6a; }
+    .status-bar .refresh-info.active { color: #00d2ff; }
 
-    @media (max-width: 600px) {
-      .observer-fields { flex-direction: column; }
-      .field input, .field select { width: 100%; }
-      .sat-table { font-size: 0.7rem; }
+    /* ---- Responsive ---- */
+    @media (max-width: 768px) {
+      .app-layout { flex-direction: column; }
+      .sidebar {
+        width: 100%;
+        min-width: 0;
+        max-height: 40vh;
+        border-right: none;
+        border-bottom: 1px solid #1e2a3a;
+      }
     }
   </style>
 </head>
 <body>
   <header>
     <h1>Satellite Proximity Alert</h1>
-    <p>Detect nearby satellites based on your position</p>
+    <p class="subtitle">Real-time satellite tracking & proximity detection</p>
+    <div class="nav-tabs">
+      <button class="nav-tab active" data-view="table">Table</button>
+      <button class="nav-tab" data-view="map">2D Map</button>
+      <button class="nav-tab" data-view="globe">3D Globe</button>
+    </div>
   </header>
 
-  <div class="container">
-    <!-- Observer position -->
-    <div class="observer-panel">
-      <h2>Observer Position</h2>
-      <div class="observer-fields">
+  <div class="app-layout">
+    <!-- Sidebar -->
+    <aside class="sidebar">
+      <!-- Observer Position -->
+      <div class="panel">
+        <h2>Observer Position</h2>
         <div class="field">
           <label>Latitude</label>
           <input type="number" id="lat" step="any" placeholder="41.39">
@@ -263,7 +384,7 @@
         </div>
         <div class="field">
           <label>Altitude (m)</label>
-          <input type="number" id="alt" value="0" step="any">
+          <input type="number" id="alt" value="2000000" step="any">
         </div>
         <div class="field">
           <label>Category</label>
@@ -280,12 +401,8 @@
             <option value="22">GPS Operational</option>
           </select>
         </div>
-        <button class="btn btn-secondary" id="geolocateBtn" onclick="geolocate()">Use GPS</button>
-        <button class="btn" id="scanBtn" onclick="scan()">Scan</button>
-      </div>
-      <div class="settings-row">
         <div class="field">
-          <label>Search Radius (°)</label>
+          <label>Search Radius (&deg;)</label>
           <input type="number" id="radius" value="70" min="0" max="90">
         </div>
         <div class="field">
@@ -294,37 +411,160 @@
         </div>
         <div class="field">
           <label>N2YO API Key</label>
-          <input type="text" id="apiKey" value="4GULL3-JSKLBH-W8J5TM-5NCI" style="width:200px">
+          <input type="text" id="apiKey" value="KKPFNP-MBTEZH-DRXW8E-5NCO">
+        </div>
+        <div class="field">
+          <label>Auto-refresh (seconds)</label>
+          <input type="number" id="refreshInterval" value="30" min="5" max="300">
+        </div>
+        <div class="btn-row">
+          <button class="btn btn-secondary" id="geolocateBtn">GPS</button>
+          <button class="btn" id="scanBtn">Scan</button>
+        </div>
+        <div class="btn-row" style="margin-top:0.4rem">
+          <button class="btn btn-secondary" id="toggleRefreshBtn" style="width:100%">Enable Auto-refresh</button>
         </div>
       </div>
-    </div>
 
-    <!-- Alert banner -->
-    <div class="alert-banner" id="alertBanner">
-      <h3 id="alertTitle">PROXIMITY ALERT</h3>
-      <p id="alertMsg"></p>
-    </div>
+      <!-- Alert Banner -->
+      <div class="alert-banner" id="alertBanner">
+        <h3 id="alertTitle">PROXIMITY ALERT</h3>
+        <p id="alertMsg"></p>
+      </div>
 
-    <!-- Results -->
-    <div id="results">
-      <div class="status" id="statusMsg">Enter your position or use GPS, then press Scan.</div>
+      <!-- Statistics -->
+      <div class="panel">
+        <h2>Statistics</h2>
+        <div class="stat-row">
+          <span class="stat-label">Total Satellites</span>
+          <span class="stat-value" id="statTotal">0</span>
+        </div>
+        <div class="stat-row">
+          <span class="stat-label">Within Threshold</span>
+          <span class="stat-value alert" id="statClose">0</span>
+        </div>
+        <div class="stat-row">
+          <span class="stat-label">Nearest Distance</span>
+          <span class="stat-value" id="statNearest">&mdash;</span>
+        </div>
+        <div class="stat-row">
+          <span class="stat-label">Last Update</span>
+          <span class="stat-value" id="statLastUpdate">Never</span>
+        </div>
+        <div class="stat-row">
+          <span class="stat-label">Observer</span>
+          <span class="stat-value" id="statObserver">Not set</span>
+        </div>
+      </div>
+
+      <!-- Legend -->
+      <div class="panel">
+        <h2>Legend</h2>
+        <div class="legend-item">
+          <div class="legend-dot" style="background:#ff4444; box-shadow:0 0 6px #ff4444;"></div>
+          <span>Debris (name contains "DEB")</span>
+        </div>
+        <div class="legend-item">
+          <div class="legend-dot" style="background:#4a9eff; box-shadow:0 0 6px #4a9eff;"></div>
+          <span>Satellite (non-debris)</span>
+        </div>
+        <div class="legend-item">
+          <div class="legend-dot" style="background:#00ff88; box-shadow:0 0 8px #00ff88;"></div>
+          <span>Your Position</span>
+        </div>
+      </div>
+    </aside>
+
+    <!-- Main Content -->
+    <div class="main-content">
+      <!-- Table View -->
+      <div id="view-table" class="view active">
+        <div class="table-empty" id="tableEmpty">Enter your position or use GPS, then press Scan.</div>
+      </div>
+
+      <!-- 2D Map View -->
+      <div id="view-map" class="view">
+        <canvas id="worldMapCanvas"></canvas>
+      </div>
+
+      <!-- 3D Globe View -->
+      <div id="view-globe" class="view"></div>
     </div>
   </div>
 
-  <script>
+  <!-- Tooltip -->
+  <div class="sat-tooltip" id="satTooltip">
+    <div class="tt-name" id="tooltipName"></div>
+    <div class="tt-info" id="tooltipInfo"></div>
+    <div class="tt-dist" id="tooltipDistance"></div>
+  </div>
+
+  <!-- Status Bar -->
+  <div class="status-bar" id="statusBar">
+    <span id="statusMsg">Ready</span>
+    <span class="refresh-info" id="refreshInfo">Auto-refresh: Off</span>
+  </div>
+
+  <!-- Three.js (loaded only when globe tab is activated) -->
+  <script type="importmap">
+  {
+    "imports": {
+      "three": "https://cdn.jsdelivr.net/npm/three@0.160.0/build/three.module.js",
+      "three/addons/": "https://cdn.jsdelivr.net/npm/three@0.160.0/examples/jsm/"
+    }
+  }
+  </script>
+
+  <script type="module">
+    import * as THREE from 'three';
+    import { OrbitControls } from 'three/addons/controls/OrbitControls.js';
+
+    // =========================================================================
+    // SHARED STATE
+    // =========================================================================
     const EARTH_RADIUS_KM = 6371.0;
+    let satellites = [];
+    let observerPos = { lat: null, lon: null, alt: 0 };
+    let autoRefreshInterval = null;
+    let refreshCountdownInterval = null;
+    let currentView = 'table';
 
-    const PROXY = "";
+    // =========================================================================
+    // NAV TABS
+    // =========================================================================
+    document.querySelectorAll('.nav-tab').forEach(tab => {
+      tab.addEventListener('click', () => {
+        document.querySelectorAll('.nav-tab').forEach(t => t.classList.remove('active'));
+        document.querySelectorAll('.view').forEach(v => v.classList.remove('active'));
+        tab.classList.add('active');
+        const view = tab.dataset.view;
+        document.getElementById('view-' + view).classList.add('active');
+        currentView = view;
 
-    /* ---- Geolocation ---- */
+        if (view === 'globe' && !globeInitialized) initGlobe();
+        if (view === 'map') { resizeMapCanvas(); drawMap(); }
+        if (view === 'globe' && globeRenderer) onGlobeResize();
+      });
+    });
+
+    // =========================================================================
+    // BUTTONS
+    // =========================================================================
+    document.getElementById('geolocateBtn').addEventListener('click', geolocate);
+    document.getElementById('scanBtn').addEventListener('click', scan);
+    document.getElementById('toggleRefreshBtn').addEventListener('click', toggleAutoRefresh);
+
+    // =========================================================================
+    // GEOLOCATION
+    // =========================================================================
     function geolocate() {
       if (!navigator.geolocation) {
-        showStatus("Geolocation not supported by your browser.", true);
+        showStatus("Geolocation not supported.", true);
         return;
       }
       const btn = document.getElementById("geolocateBtn");
       btn.disabled = true;
-      btn.textContent = "Locating…";
+      btn.textContent = "…";
 
       navigator.geolocation.getCurrentPosition(
         (pos) => {
@@ -334,69 +574,38 @@
             document.getElementById("alt").value = pos.coords.altitude.toFixed(1);
           }
           btn.disabled = false;
-          btn.textContent = "Use GPS";
+          btn.textContent = "GPS";
         },
         (err) => {
           showStatus("Geolocation error: " + err.message, true);
           btn.disabled = false;
-          btn.textContent = "Use GPS";
+          btn.textContent = "GPS";
         },
         { enableHighAccuracy: true, timeout: 10000 }
       );
     }
 
-    /* ---- ECEF distance (ported from distance_to_satelites.py) ---- */
+    // =========================================================================
+    // DISTANCE CALC (ECEF)
+    // =========================================================================
     function computeDistanceKm(obsLat, obsLon, obsAltKm, satLat, satLon, satAltKm) {
-      const toRad = (d) => (d * Math.PI) / 180;
-      const oLatR = toRad(obsLat);
-      const oLonR = toRad(obsLon);
-      const sLatR = toRad(satLat);
-      const sLonR = toRad(satLon);
-
+      const toRad = d => d * Math.PI / 180;
+      const oLatR = toRad(obsLat), oLonR = toRad(obsLon);
+      const sLatR = toRad(satLat), sLonR = toRad(satLon);
       const rObs = EARTH_RADIUS_KM + obsAltKm;
       const rSat = EARTH_RADIUS_KM + satAltKm;
-
       const ox = rObs * Math.cos(oLatR) * Math.cos(oLonR);
       const oy = rObs * Math.cos(oLatR) * Math.sin(oLonR);
       const oz = rObs * Math.sin(oLatR);
-
       const sx = rSat * Math.cos(sLatR) * Math.cos(sLonR);
       const sy = rSat * Math.cos(sLatR) * Math.sin(sLonR);
       const sz = rSat * Math.sin(sLatR);
-
       return Math.sqrt((ox - sx) ** 2 + (oy - sy) ** 2 + (oz - sz) ** 2);
     }
 
-    /* ---- UI helpers ---- */
-    function showStatus(msg, isError) {
-      const results = document.getElementById("results");
-      results.innerHTML = `<div class="status${isError ? " error" : ""}" id="statusMsg">${esc(msg)}</div>`;
-    }
-
-    function showAlert(closeSats, threshold) {
-      const banner = document.getElementById("alertBanner");
-      if (closeSats.length === 0) {
-        banner.classList.remove("visible");
-        return;
-      }
-      const nearest = closeSats[0];
-      document.getElementById("alertTitle").textContent =
-        `PROXIMITY ALERT — ${closeSats.length} satellite${closeSats.length > 1 ? "s" : ""} within ${threshold} km`;
-      document.getElementById("alertMsg").textContent =
-        `Nearest: ${nearest.name} (NORAD ${nearest.noradId}) at ${nearest.distance.toFixed(1)} km`;
-      banner.classList.add("visible");
-
-      // Browser notification
-      if (Notification.permission === "granted") {
-        new Notification("Satellite Proximity Alert", {
-          body: `${nearest.name} at ${nearest.distance.toFixed(1)} km`,
-        });
-      } else if (Notification.permission !== "denied") {
-        Notification.requestPermission();
-      }
-    }
-
-    /* ---- Main scan ---- */
+    // =========================================================================
+    // SCAN (shared — populates all views)
+    // =========================================================================
     async function scan() {
       const lat = parseFloat(document.getElementById("lat").value);
       const lon = parseFloat(document.getElementById("lon").value);
@@ -407,220 +616,524 @@
       const apiKey = document.getElementById("apiKey").value.trim();
 
       if (isNaN(lat) || isNaN(lon)) {
-        showStatus("Please enter valid latitude and longitude.", true);
+        showStatus("Enter valid latitude and longitude.", true);
         return;
       }
 
+      observerPos = { lat, lon, alt };
+
       const btn = document.getElementById("scanBtn");
       btn.disabled = true;
-      btn.textContent = "Scanning…";
+      btn.textContent = "…";
       showStatus("Fetching satellites from N2YO…", false);
       document.getElementById("alertBanner").classList.remove("visible");
 
       const obsAltKm = alt / 1000.0;
 
       try {
-        const apiUrl =
-          `/api/above/${lat}/${lon}/${alt}/${radius}/${category}&apiKey=${apiKey}`;
+        const apiUrl = `/api/above/${lat}/${lon}/${alt}/${radius}/${category}?apiKey=${apiKey}`;
         const resp = await fetch(apiUrl);
         if (!resp.ok) throw new Error(`HTTP ${resp.status}`);
         const data = await resp.json();
 
-        const satellites = data.above || [];
-        if (satellites.length === 0) {
+        const satData = data.above || [];
+        if (satData.length === 0) {
           showStatus("No satellites found above your position.", false);
+          satellites = [];
+          updateAllViews();
           btn.disabled = false;
           btn.textContent = "Scan";
           return;
         }
 
-        // Compute distances
-        const results = satellites.map((sat) => {
+        satellites = satData.map(sat => {
           const satLat = sat.satlat || 0;
           const satLon = sat.satlng || 0;
           const satAltKm = sat.satalt || 0;
           const distance = computeDistanceKm(lat, lon, obsAltKm, satLat, satLon, satAltKm);
-          return {
-            name: sat.satname || "Unknown",
-            noradId: sat.satid || "?",
-            satLat,
-            satLon,
-            satAltKm,
-            distance,
-          };
+          return { name: sat.satname || "Unknown", noradId: sat.satid || "?", satLat, satLon, satAltKm, distance };
         });
 
-        results.sort((a, b) => a.distance - b.distance);
+        satellites.sort((a, b) => a.distance - b.distance);
+        satellites = satellites.filter(s => s.distance <= 30000);
 
-        // Only keep satellites within 10,000 km
-        const filtered = results.filter((r) => r.distance <= 10000);
-
-        if (filtered.length === 0) {
-          showStatus("No satellites found within 10,000 km.", false);
+        if (satellites.length === 0) {
+          showStatus("No satellites within 30,000 km.", false);
+          updateAllViews();
           btn.disabled = false;
           btn.textContent = "Scan";
           return;
         }
 
-        // Alert for close satellites
-        const closeSats = filtered.filter((r) => r.distance <= threshold);
+        const closeSats = satellites.filter(s => s.distance <= threshold);
         showAlert(closeSats, threshold);
+        showStatus(`Found ${satellites.length} satellites`, false);
+        updateAllViews();
 
-        // Render table
-        renderTable(filtered, threshold);
       } catch (err) {
         showStatus("Error: " + err.message, true);
+        satellites = [];
+        updateAllViews();
       }
 
       btn.disabled = false;
       btn.textContent = "Scan";
     }
 
-    function distanceBadgeClass(distance, threshold) {
-      if (distance <= threshold) return "close";
-      if (distance <= threshold * 3) return "medium";
-      return "far";
+    function updateAllViews() {
+      const threshold = parseFloat(document.getElementById("threshold").value) || 1000;
+      updateStats();
+      renderTable(threshold);
+      drawMap();
+      if (globeInitialized) updateGlobe(threshold);
     }
 
-    function renderDistanceLine(results, threshold) {
-      const lineResults = results.filter((r) => r.distance <= 1000);
-      if (lineResults.length === 0) return "";
+    // =========================================================================
+    // ALERT
+    // =========================================================================
+    function showAlert(closeSats, threshold) {
+      const banner = document.getElementById("alertBanner");
+      if (closeSats.length === 0) { banner.classList.remove("visible"); return; }
+      const nearest = closeSats[0];
+      document.getElementById("alertTitle").textContent =
+        `PROXIMITY ALERT — ${closeSats.length} satellite${closeSats.length > 1 ? "s" : ""} within ${threshold} km`;
+      document.getElementById("alertMsg").textContent =
+        `Nearest: ${nearest.name} (NORAD ${nearest.noradId}) at ${nearest.distance.toFixed(1)} km`;
+      banner.classList.add("visible");
 
-      const maxDist = Math.max(...lineResults.map((r) => r.distance), 1000);
-
-      // Build with a real DOM container + canvas-style tooltip
-      const containerId = "distline-" + Date.now();
-
-      let html = `<div class="distance-line-container">
-        <h2>Distance Line — ${lineResults.length} satellites within 1,000 km</h2>
-        <div id="${containerId}" style="position:relative;min-width:600px;height:120px;">
-          <svg style="width:100%;height:100%;" viewBox="0 0 850 120" xmlns="http://www.w3.org/2000/svg">`;
-
-      const svgW = 850, padL = 50, padR = 30;
-      const lineY = 60;
-      const lineW = svgW - padL - padR;
-      const scale = (d) => padL + (d / maxDist) * lineW;
-
-      // Axis
-      html += `<line x1="${padL}" y1="${lineY}" x2="${padL + lineW}" y2="${lineY}" stroke="#1e2a3a" stroke-width="2"/>`;
-
-      // Observer
-      html += `<circle cx="${padL}" cy="${lineY}" r="8" fill="#00d2ff"/>`;
-      html += `<text x="${padL}" y="${lineY - 18}" fill="#00d2ff" font-size="14" font-weight="bold" font-family="Courier New" text-anchor="middle">YOU</text>`;
-
-      // Threshold
-      if (threshold < maxDist) {
-        const tx = scale(threshold);
-        html += `<line x1="${tx}" y1="${lineY - 25}" x2="${tx}" y2="${lineY + 25}" stroke="#ff4444" stroke-width="1.5" stroke-dasharray="5,4"/>`;
-        html += `<text x="${tx}" y="${lineY + 45}" fill="#ff4444" font-size="13" font-weight="bold" font-family="Courier New" text-anchor="middle">${threshold} km</text>`;
+      if (Notification.permission === "granted") {
+        new Notification("Satellite Proximity Alert", { body: `${nearest.name} at ${nearest.distance.toFixed(1)} km` });
+      } else if (Notification.permission !== "denied") {
+        Notification.requestPermission();
       }
-
-      // Tick marks — big text
-      const ticks = 5;
-      for (let i = 1; i <= ticks; i++) {
-        const d = (maxDist / ticks) * i;
-        const x = scale(d);
-        html += `<line x1="${x}" y1="${lineY - 6}" x2="${x}" y2="${lineY + 6}" stroke="#2a3a4a" stroke-width="1"/>`;
-        html += `<text x="${x}" y="${lineY + 28}" fill="#4a5a6a" font-size="13" font-weight="bold" font-family="Courier New" text-anchor="middle">${Math.round(d)}</text>`;
-      }
-
-      // Satellite dots (no labels — tooltip via JS)
-      lineResults.forEach((r, i) => {
-        const x = scale(r.distance);
-        const color = r.distance <= threshold ? "#ff4444" : r.distance <= threshold * 3 ? "#ffaa00" : "#00d2ff";
-        const dotR = r.distance <= threshold ? 6 : 4;
-        html += `<circle class="satdot" cx="${x}" cy="${lineY}" r="${dotR}" fill="${color}" opacity="0.9" data-i="${i}" style="cursor:pointer"/>`;
-      });
-
-      html += `</svg>`;
-
-      // Floating tooltip div (positioned absolutely over the SVG)
-      html += `<div id="${containerId}-tip" style="display:none;position:absolute;top:0;left:0;background:#0a0e17;border:2px solid #00d2ff;border-radius:6px;padding:10px 14px;pointer-events:none;z-index:10;white-space:nowrap;">
-        <div id="${containerId}-name" style="font-size:16px;font-weight:bold;color:#00d2ff;font-family:Courier New;"></div>
-        <div id="${containerId}-dist" style="font-size:22px;font-weight:bold;color:#fff;font-family:Courier New;margin-top:2px;"></div>
-        <div id="${containerId}-alt" style="font-size:12px;color:#6b7b8d;font-family:Courier New;"></div>
-      </div>`;
-
-      html += `</div></div>`;
-
-      // Store data on window so the global handler can access it
-      window._distLineData = lineResults.map(r => ({ name: r.name, distance: r.distance, satAltKm: r.satAltKm }));
-      window._distLineThreshold = threshold;
-      window._distLineContainerId = containerId;
-
-      return html;
     }
 
-    function renderTable(results, threshold) {
-      const closeSats = results.filter((r) => r.distance <= threshold);
+    // =========================================================================
+    // STATS
+    // =========================================================================
+    function updateStats() {
+      const threshold = parseFloat(document.getElementById("threshold").value) || 1000;
+      const closeSats = satellites.filter(s => s.distance <= threshold);
+      document.getElementById("statTotal").textContent = satellites.length;
+      document.getElementById("statClose").textContent = closeSats.length;
+      document.getElementById("statNearest").textContent =
+        satellites.length > 0 ? satellites[0].distance.toFixed(1) + " km" : "\u2014";
+      document.getElementById("statLastUpdate").textContent = new Date().toLocaleTimeString();
+      if (observerPos.lat !== null) {
+        document.getElementById("statObserver").textContent =
+          `${observerPos.lat.toFixed(2)}\u00b0, ${observerPos.lon.toFixed(2)}\u00b0`;
+      }
+    }
 
-      let html = renderDistanceLine(results, threshold);
+    // =========================================================================
+    // AUTO-REFRESH
+    // =========================================================================
+    function toggleAutoRefresh() {
+      const btn = document.getElementById("toggleRefreshBtn");
+      const info = document.getElementById("refreshInfo");
 
-      html += `<table class="sat-table">
-        <thead><tr>
-          <th>Satellite</th><th>NORAD ID</th><th>Alt (km)</th><th>Distance (km)</th>
-        </tr></thead><tbody>`;
+      if (autoRefreshInterval) {
+        clearInterval(autoRefreshInterval);
+        clearInterval(refreshCountdownInterval);
+        autoRefreshInterval = null;
+        refreshCountdownInterval = null;
+        btn.textContent = "Enable Auto-refresh";
+        info.textContent = "Auto-refresh: Off";
+        info.classList.remove("active");
+      } else {
+        const secs = parseInt(document.getElementById("refreshInterval").value) || 30;
+        let countdown = secs;
+        autoRefreshInterval = setInterval(() => { scan(); countdown = secs; }, secs * 1000);
+        refreshCountdownInterval = setInterval(() => {
+          countdown = Math.max(0, countdown - 1);
+          info.textContent = `Next refresh: ${countdown}s`;
+        }, 1000);
+        btn.textContent = "Disable Auto-refresh";
+        info.textContent = `Next refresh: ${secs}s`;
+        info.classList.add("active");
+      }
+    }
 
-      for (const r of results) {
-        const cls = r.distance <= threshold ? "close" : r.distance <= threshold * 3 ? "medium" : "";
-        const badgeCls = distanceBadgeClass(r.distance, threshold);
-        html += `<tr class="${cls}">
-          <td>${esc(r.name)}</td>
+    // =========================================================================
+    // STATUS BAR
+    // =========================================================================
+    function showStatus(msg, isError) {
+      const bar = document.getElementById("statusBar");
+      document.getElementById("statusMsg").textContent = msg;
+      if (isError) bar.classList.add("error");
+      else bar.classList.remove("error");
+    }
+
+    // =========================================================================
+    // TOOLTIP (shared by map & globe)
+    // =========================================================================
+    function showTooltip(sat, x, y) {
+      const threshold = parseFloat(document.getElementById("threshold").value) || 1000;
+      const tip = document.getElementById("satTooltip");
+      document.getElementById("tooltipName").textContent = sat.name;
+      document.getElementById("tooltipInfo").innerHTML =
+        `NORAD: ${sat.noradId}<br>Alt: ${sat.satAltKm.toFixed(1)} km<br>Pos: ${sat.satLat.toFixed(2)}\u00b0, ${sat.satLon.toFixed(2)}\u00b0`;
+      const distEl = document.getElementById("tooltipDistance");
+      distEl.textContent = `${sat.distance.toFixed(1)} km`;
+      distEl.className = 'tt-dist';
+      if (sat.distance <= threshold) distEl.classList.add('close');
+      else if (sat.distance <= threshold * 3) distEl.classList.add('medium');
+      tip.style.left = (x + 15) + 'px';
+      tip.style.top = (y + 15) + 'px';
+      tip.classList.add('visible');
+    }
+
+    function hideTooltip() {
+      document.getElementById("satTooltip").classList.remove("visible");
+    }
+
+    function esc(s) { const d = document.createElement("div"); d.textContent = s; return d.innerHTML; }
+
+    function isDebris(sat) { return sat.name.toLowerCase().includes('deb'); }
+
+    // =========================================================================
+    // TABLE VIEW
+    // =========================================================================
+    function renderTable(threshold) {
+      const container = document.getElementById("view-table");
+      if (satellites.length === 0) {
+        container.innerHTML = '<div class="table-empty">No satellite data. Press Scan to fetch.</div>';
+        return;
+      }
+      const closeSats = satellites.filter(r => r.distance <= threshold);
+      let html = `<table class="sat-table">
+        <thead><tr><th>Satellite</th><th>NORAD</th><th>Alt (km)</th><th>Lat</th><th>Lon</th><th>Distance</th></tr></thead><tbody>`;
+      for (const r of satellites) {
+        const deb = isDebris(r);
+        const nameColor = deb ? 'color:#ff4444' : 'color:#4a9eff';
+        const badge = r.distance <= threshold ? "close" : r.distance <= threshold * 3 ? "medium" : "far";
+        html += `<tr>
+          <td style="${nameColor};font-weight:bold">${esc(r.name)}</td>
           <td>${esc(String(r.noradId))}</td>
           <td>${r.satAltKm.toFixed(1)}</td>
-          <td><span class="distance-badge ${badgeCls}">${r.distance.toFixed(1)}</span></td>
+          <td>${r.satLat.toFixed(2)}\u00b0</td>
+          <td>${r.satLon.toFixed(2)}\u00b0</td>
+          <td><span class="distance-badge ${badge}">${r.distance.toFixed(1)} km</span></td>
         </tr>`;
       }
-
       html += `</tbody></table>`;
-      html += `<div class="summary">Total: ${results.length} satellites &nbsp;|&nbsp; Within alert threshold: ${closeSats.length}</div>`;
-
-      document.getElementById("results").innerHTML = html;
-      setupDistLineTooltips();
+      html += `<div class="table-summary">Total: ${satellites.length} &nbsp;|&nbsp; Within threshold: ${closeSats.length}</div>`;
+      container.innerHTML = html;
     }
 
-    function setupDistLineTooltips() {
-      if (!window._distLineData) return;
-      const ctn = document.getElementById(window._distLineContainerId);
-      if (!ctn) return;
-      const tip = document.getElementById(window._distLineContainerId + "-tip");
-      const nameEl = document.getElementById(window._distLineContainerId + "-name");
-      const distEl = document.getElementById(window._distLineContainerId + "-dist");
-      const altEl = document.getElementById(window._distLineContainerId + "-alt");
-      const data = window._distLineData;
-      const threshold = window._distLineThreshold;
+    // =========================================================================
+    // 2D MAP VIEW
+    // =========================================================================
+    let mapCanvas, mapCtx;
 
-      ctn.querySelectorAll(".satdot").forEach(dot => {
-        dot.addEventListener("mouseenter", function() {
-          const r = data[this.dataset.i];
-          const color = r.distance <= threshold ? "#ff4444" : r.distance <= threshold * 3 ? "#ffaa00" : "#00d2ff";
-          tip.style.borderColor = color;
-          nameEl.style.color = color;
-          nameEl.textContent = r.name;
-          distEl.textContent = r.distance.toFixed(1) + " km";
-          altEl.textContent = "Altitude: " + r.satAltKm.toFixed(0) + " km";
-          tip.style.display = "block";
-          const rect = ctn.getBoundingClientRect();
-          const dotRect = this.getBoundingClientRect();
-          let left = dotRect.left - rect.left + dotRect.width / 2 - tip.offsetWidth / 2;
-          left = Math.max(0, Math.min(left, rect.width - tip.offsetWidth));
-          tip.style.left = left + "px";
-          tip.style.top = "0px";
-          this.setAttribute("r", "8");
-        });
-        dot.addEventListener("mouseleave", function() {
-          tip.style.display = "none";
-          const r = data[this.dataset.i];
-          this.setAttribute("r", r.distance <= threshold ? "6" : "4");
-        });
+    function initMap() {
+      mapCanvas = document.getElementById("worldMapCanvas");
+      mapCtx = mapCanvas.getContext("2d");
+      resizeMapCanvas();
+      window.addEventListener("resize", () => { if (currentView === 'map') { resizeMapCanvas(); drawMap(); } });
+      mapCanvas.addEventListener("mousemove", handleMapMouse);
+      mapCanvas.addEventListener("mouseleave", hideTooltip);
+    }
+
+    function resizeMapCanvas() {
+      if (!mapCanvas) return;
+      const container = document.getElementById("view-map");
+      mapCanvas.width = container.clientWidth;
+      mapCanvas.height = container.clientHeight;
+    }
+
+    function latLonToCanvas(lat, lon) {
+      return {
+        x: ((lon + 180) / 360) * mapCanvas.width,
+        y: ((90 - lat) / 180) * mapCanvas.height,
+      };
+    }
+
+    function drawMap() {
+      if (!mapCtx || !mapCanvas.width) return;
+      const ctx = mapCtx;
+      ctx.fillStyle = '#0a0e17';
+      ctx.fillRect(0, 0, mapCanvas.width, mapCanvas.height);
+
+      // Grid
+      ctx.strokeStyle = 'rgba(30, 42, 58, 0.3)';
+      ctx.lineWidth = 1;
+      for (let lat = -80; lat <= 80; lat += 20) {
+        const p1 = latLonToCanvas(lat, -180), p2 = latLonToCanvas(lat, 180);
+        ctx.beginPath(); ctx.moveTo(p1.x, p1.y); ctx.lineTo(p2.x, p2.y); ctx.stroke();
+      }
+      for (let lon = -180; lon <= 180; lon += 30) {
+        const p1 = latLonToCanvas(-90, lon), p2 = latLonToCanvas(90, lon);
+        ctx.beginPath(); ctx.moveTo(p1.x, p1.y); ctx.lineTo(p2.x, p2.y); ctx.stroke();
+      }
+      // Equator
+      ctx.strokeStyle = 'rgba(0, 210, 255, 0.2)';
+      const eq1 = latLonToCanvas(0, -180), eq2 = latLonToCanvas(0, 180);
+      ctx.beginPath(); ctx.moveTo(eq1.x, eq1.y); ctx.lineTo(eq2.x, eq2.y); ctx.stroke();
+
+      // Continents
+      drawContinents(ctx);
+
+      // Satellites
+      const threshold = parseFloat(document.getElementById("threshold").value) || 1000;
+      satellites.forEach(sat => {
+        const pos = latLonToCanvas(sat.satLat, sat.satLon);
+        const deb = isDebris(sat);
+        const color = deb ? '#ff4444' : '#4a9eff';
+        const r = deb ? 5 : 3;
+        ctx.fillStyle = color;
+        ctx.beginPath(); ctx.arc(pos.x, pos.y, r, 0, Math.PI * 2); ctx.fill();
+        if (deb) {
+          ctx.shadowBlur = 12; ctx.shadowColor = '#ff4444'; ctx.fill(); ctx.shadowBlur = 0;
+        }
+        sat._mx = pos.x; sat._my = pos.y; sat._mr = r;
+      });
+
+      // Observer
+      if (observerPos.lat !== null && observerPos.lon !== null) {
+        const op = latLonToCanvas(observerPos.lat, observerPos.lon);
+
+        // Outer glow ring
+        ctx.strokeStyle = 'rgba(0, 255, 100, 0.25)'; ctx.lineWidth = 2;
+        ctx.beginPath(); ctx.arc(op.x, op.y, 22, 0, Math.PI * 2); ctx.stroke();
+
+        // Mid glow ring
+        ctx.strokeStyle = 'rgba(0, 255, 100, 0.4)'; ctx.lineWidth = 2;
+        ctx.beginPath(); ctx.arc(op.x, op.y, 14, 0, Math.PI * 2); ctx.stroke();
+
+        // Main dot with heavy glow
+        ctx.fillStyle = '#00ff44';
+        ctx.shadowBlur = 30; ctx.shadowColor = '#00ff44';
+        ctx.beginPath(); ctx.arc(op.x, op.y, 8, 0, Math.PI * 2); ctx.fill();
+        ctx.fill(); // double-fill for stronger glow
+        ctx.shadowBlur = 0;
+
+        // Crosshair
+        ctx.strokeStyle = '#00ff44'; ctx.lineWidth = 2;
+        ctx.beginPath();
+        ctx.moveTo(op.x - 18, op.y); ctx.lineTo(op.x - 10, op.y);
+        ctx.moveTo(op.x + 10, op.y); ctx.lineTo(op.x + 18, op.y);
+        ctx.moveTo(op.x, op.y - 18); ctx.lineTo(op.x, op.y - 10);
+        ctx.moveTo(op.x, op.y + 10); ctx.lineTo(op.x, op.y + 18);
+        ctx.stroke();
+
+        // Label
+        ctx.fillStyle = '#00ff44'; ctx.font = 'bold 11px Courier New';
+        ctx.textAlign = 'center';
+        ctx.fillText('YOU', op.x, op.y - 28);
+      }
+    }
+
+    function drawContinents(ctx) {
+      ctx.strokeStyle = 'rgba(107, 123, 141, 0.3)';
+      ctx.fillStyle = 'rgba(30, 42, 58, 0.2)';
+      ctx.lineWidth = 1;
+      const continents = [
+        [{lat:70,lon:-170},{lat:50,lon:-140},{lat:30,lon:-120},{lat:20,lon:-100},{lat:10,lon:-80},{lat:15,lon:-70},{lat:45,lon:-60},{lat:60,lon:-80},{lat:70,lon:-100}],
+        [{lat:10,lon:-80},{lat:0,lon:-75},{lat:-20,lon:-70},{lat:-40,lon:-70},{lat:-55,lon:-68},{lat:-40,lon:-60},{lat:-20,lon:-50},{lat:0,lon:-50},{lat:10,lon:-60}],
+        [{lat:70,lon:20},{lat:60,lon:10},{lat:45,lon:-10},{lat:35,lon:-10},{lat:35,lon:30},{lat:45,lon:40},{lat:60,lon:40},{lat:70,lon:30}],
+        [{lat:35,lon:-10},{lat:10,lon:-15},{lat:-35,lon:20},{lat:-35,lon:50},{lat:10,lon:50},{lat:30,lon:30}],
+        [{lat:70,lon:40},{lat:60,lon:60},{lat:70,lon:100},{lat:60,lon:140},{lat:40,lon:140},{lat:20,lon:120},{lat:10,lon:100},{lat:20,lon:70},{lat:35,lon:50}],
+        [{lat:-10,lon:115},{lat:-35,lon:115},{lat:-40,lon:140},{lat:-35,lon:150},{lat:-10,lon:145}]
+      ];
+      continents.forEach(c => {
+        ctx.beginPath();
+        c.forEach((pt, i) => { const p = latLonToCanvas(pt.lat, pt.lon); i === 0 ? ctx.moveTo(p.x, p.y) : ctx.lineTo(p.x, p.y); });
+        ctx.closePath(); ctx.fill(); ctx.stroke();
       });
     }
 
-    function esc(s) {
-      const d = document.createElement("div");
-      d.textContent = s;
-      return d.innerHTML;
+    function handleMapMouse(e) {
+      const rect = mapCanvas.getBoundingClientRect();
+      const x = e.clientX - rect.left, y = e.clientY - rect.top;
+      let found = null;
+      for (const sat of satellites) {
+        const dx = x - (sat._mx || 0), dy = y - (sat._my || 0);
+        if (Math.sqrt(dx * dx + dy * dy) <= (sat._mr || 3) + 5) { found = sat; break; }
+      }
+      if (found) {
+        showTooltip(found, e.clientX, e.clientY);
+        mapCanvas.style.cursor = 'pointer';
+      } else {
+        hideTooltip();
+        mapCanvas.style.cursor = 'default';
+      }
     }
+
+    // =========================================================================
+    // 3D GLOBE VIEW
+    // =========================================================================
+    let globeInitialized = false;
+    let globeScene, globeCamera, globeRenderer, globeControls;
+    let earthMesh, satelliteMeshes = [], observerMesh = null;
+    let globeRaycaster, globeMouse;
+    let hoveredSat = null;
+
+    function initGlobe() {
+      if (globeInitialized) return;
+      globeInitialized = true;
+
+      const container = document.getElementById('view-globe');
+      globeScene = new THREE.Scene();
+      globeCamera = new THREE.PerspectiveCamera(45, container.clientWidth / container.clientHeight, 0.1, 100000);
+      globeCamera.position.set(15000, 8000, 15000);
+
+      globeRenderer = new THREE.WebGLRenderer({ antialias: true, alpha: true });
+      globeRenderer.setSize(container.clientWidth, container.clientHeight);
+      globeRenderer.setPixelRatio(window.devicePixelRatio);
+      container.appendChild(globeRenderer.domElement);
+
+      globeControls = new OrbitControls(globeCamera, globeRenderer.domElement);
+      globeControls.enableDamping = true;
+      globeControls.dampingFactor = 0.05;
+      globeControls.minDistance = 7000;
+      globeControls.maxDistance = 30000;
+
+      globeRaycaster = new THREE.Raycaster();
+      globeMouse = new THREE.Vector2();
+
+      // Lights
+      const sun = new THREE.DirectionalLight(0xffffff, 1.2);
+      sun.position.set(5, 3, 5);
+      globeScene.add(sun);
+      globeScene.add(new THREE.AmbientLight(0x404040, 0.8));
+
+      // Stars
+      const starGeo = new THREE.BufferGeometry();
+      const starPos = new Float32Array(5000 * 3);
+      for (let i = 0; i < starPos.length; i += 3) {
+        const r = 50000 + Math.random() * 50000;
+        const th = Math.random() * Math.PI * 2;
+        const ph = Math.acos(2 * Math.random() - 1);
+        starPos[i] = r * Math.sin(ph) * Math.cos(th);
+        starPos[i+1] = r * Math.sin(ph) * Math.sin(th);
+        starPos[i+2] = r * Math.cos(ph);
+      }
+      starGeo.setAttribute('position', new THREE.BufferAttribute(starPos, 3));
+      globeScene.add(new THREE.Points(starGeo, new THREE.PointsMaterial({ color: 0xffffff, size: 2, sizeAttenuation: false })));
+
+      // Earth
+      const earthGeo = new THREE.SphereGeometry(EARTH_RADIUS_KM, 64, 64);
+      const earthMat = new THREE.MeshPhongMaterial({ color: 0x2233ff, emissive: 0x112244, shininess: 5 });
+      earthMesh = new THREE.Mesh(earthGeo, earthMat);
+      globeScene.add(earthMesh);
+
+      new THREE.TextureLoader().load('textures/earth_day.jpg',
+        tex => { earthMesh.material.map = tex; earthMesh.material.needsUpdate = true; },
+        undefined, () => {});
+
+      // Atmosphere
+      const atmosGeo = new THREE.SphereGeometry(EARTH_RADIUS_KM * 1.01, 64, 64);
+      const atmosMat = new THREE.ShaderMaterial({
+        vertexShader: `varying vec3 vNormal; void main(){ vNormal=normalize(normalMatrix*normal); gl_Position=projectionMatrix*modelViewMatrix*vec4(position,1.0); }`,
+        fragmentShader: `varying vec3 vNormal; void main(){ float i=pow(0.6-dot(vNormal,vec3(0,0,1)),2.0); gl_FragColor=vec4(0.3,0.6,1.0,1.0)*i; }`,
+        blending: THREE.AdditiveBlending, side: THREE.BackSide, transparent: true
+      });
+      globeScene.add(new THREE.Mesh(atmosGeo, atmosMat));
+
+      // Events
+      window.addEventListener('resize', () => { if (currentView === 'globe') onGlobeResize(); });
+      globeRenderer.domElement.addEventListener('mousemove', onGlobeMouseMove);
+      globeRenderer.domElement.addEventListener('mouseleave', () => { hideTooltip(); hoveredSat = null; });
+
+      // Render existing data
+      const threshold = parseFloat(document.getElementById("threshold").value) || 1000;
+      if (satellites.length > 0) updateGlobe(threshold);
+
+      // Animation loop
+      let pulseTime = 0;
+      function animate() {
+        requestAnimationFrame(animate);
+        globeControls.update();
+        if (observerMesh) { pulseTime += 0.05; const s = 1 + Math.sin(pulseTime) * 0.2; observerMesh.scale.set(s, s, s); }
+        globeRenderer.render(globeScene, globeCamera);
+      }
+      animate();
+    }
+
+    function latLonAltToVec3(lat, lon, altKm) {
+      const r = EARTH_RADIUS_KM + altKm;
+      const phi = (90 - lat) * Math.PI / 180;
+      const theta = (lon + 180) * Math.PI / 180;
+      return new THREE.Vector3(
+        -r * Math.sin(phi) * Math.cos(theta),
+        r * Math.cos(phi),
+        r * Math.sin(phi) * Math.sin(theta)
+      );
+    }
+
+    function updateGlobe(threshold) {
+      if (!globeInitialized) return;
+
+      // Clear old satellites
+      satelliteMeshes.forEach(m => { globeScene.remove(m); m.geometry.dispose(); m.material.dispose(); });
+      satelliteMeshes = [];
+
+      satellites.forEach(sat => {
+        const pos = latLonAltToVec3(sat.satLat, sat.satLon, sat.satAltKm);
+        const deb = isDebris(sat);
+        let color = deb ? 0xff4444 : 0x4a9eff;
+        let emI = deb ? 2.5 : 1.2;
+        const geo = new THREE.SphereGeometry(100, 16, 16);
+        const mat = new THREE.MeshLambertMaterial({ color, emissive: color, emissiveIntensity: emI });
+        const mesh = new THREE.Mesh(geo, mat);
+        mesh.position.copy(pos);
+        mesh.userData.satellite = sat;
+        globeScene.add(mesh);
+        satelliteMeshes.push(mesh);
+      });
+
+      // Observer
+      if (observerMesh) { globeScene.remove(observerMesh); observerMesh.geometry.dispose(); observerMesh.material.dispose(); observerMesh = null; }
+      if (observerPos.lat !== null) {
+        const pos = latLonAltToVec3(observerPos.lat, observerPos.lon, observerPos.alt / 1000);
+        const geo = new THREE.SphereGeometry(180, 16, 16);
+        const mat = new THREE.MeshLambertMaterial({ color: 0x00ff44, emissive: 0x00ff44, emissiveIntensity: 5.0 });
+        observerMesh = new THREE.Mesh(geo, mat);
+        observerMesh.position.copy(pos);
+        globeScene.add(observerMesh);
+
+        // Add a glow ring around observer
+        const ringGeo = new THREE.RingGeometry(250, 350, 32);
+        const ringMat = new THREE.MeshBasicMaterial({ color: 0x00ff44, side: THREE.DoubleSide, transparent: true, opacity: 0.4 });
+        const ring = new THREE.Mesh(ringGeo, ringMat);
+        ring.position.copy(pos);
+        ring.lookAt(0, 0, 0);
+        globeScene.add(ring);
+        satelliteMeshes.push(ring); // so it gets cleaned up on next update
+      }
+    }
+
+    function onGlobeResize() {
+      const container = document.getElementById('view-globe');
+      globeCamera.aspect = container.clientWidth / container.clientHeight;
+      globeCamera.updateProjectionMatrix();
+      globeRenderer.setSize(container.clientWidth, container.clientHeight);
+    }
+
+    function onGlobeMouseMove(e) {
+      const rect = globeRenderer.domElement.getBoundingClientRect();
+      globeMouse.x = ((e.clientX - rect.left) / rect.width) * 2 - 1;
+      globeMouse.y = -((e.clientY - rect.top) / rect.height) * 2 + 1;
+      globeRaycaster.setFromCamera(globeMouse, globeCamera);
+      const hits = globeRaycaster.intersectObjects(satelliteMeshes);
+      if (hits.length > 0) {
+        const sat = hits[0].object.userData.satellite;
+        if (sat !== hoveredSat) { hoveredSat = sat; showTooltip(sat, e.clientX, e.clientY); }
+        globeRenderer.domElement.style.cursor = 'pointer';
+      } else {
+        if (hoveredSat) { hoveredSat = null; hideTooltip(); }
+        globeRenderer.domElement.style.cursor = 'grab';
+      }
+    }
+
+    // =========================================================================
+    // INIT
+    // =========================================================================
+    window.addEventListener('load', () => {
+      initMap();
+      drawMap();
+    });
   </script>
 </body>
 </html>

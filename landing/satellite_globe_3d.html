@@ -1,0 +1,1130 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>3D Satellite Globe - Real-time Tracking</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Courier New', monospace;
+            background: #000;
+            color: #c8d6e5;
+            overflow: hidden;
+        }
+
+        header {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            z-index: 100;
+            text-align: center;
+            padding: 1rem;
+            background: linear-gradient(180deg, rgba(0, 0, 0, 0.8) 0%, rgba(0, 0, 0, 0) 100%);
+            pointer-events: none;
+        }
+
+        header h1 {
+            font-size: 1.4rem;
+            color: #00d2ff;
+            letter-spacing: 3px;
+            text-transform: uppercase;
+        }
+
+        header p {
+            color: #6b7b8d;
+            margin-top: 0.3rem;
+            font-size: 0.75rem;
+        }
+
+        /* 3D Canvas Container */
+        #canvas-container {
+            width: 100%;
+            height: 100vh;
+            position: fixed;
+            top: 0;
+            left: 0;
+        }
+
+        /* Control Panel */
+        .control-panel {
+            position: fixed;
+            top: 80px;
+            left: 20px;
+            z-index: 90;
+            background: rgba(10, 14, 23, 0.9);
+            border: 1px solid rgba(0, 210, 255, 0.3);
+            border-radius: 8px;
+            padding: 1rem;
+            width: 280px;
+            backdrop-filter: blur(15px);
+            max-height: calc(100vh - 100px);
+            overflow-y: auto;
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.5);
+        }
+
+        .control-panel h2 {
+            font-size: 0.85rem;
+            color: #00d2ff;
+            margin-bottom: 0.8rem;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        .field {
+            display: flex;
+            flex-direction: column;
+            gap: 0.3rem;
+            margin-bottom: 0.8rem;
+        }
+
+        .field label {
+            font-size: 0.7rem;
+            color: #6b7b8d;
+            text-transform: uppercase;
+        }
+
+        .field input,
+        .field select {
+            background: rgba(17, 25, 39, 0.8);
+            border: 1px solid rgba(30, 42, 58, 0.8);
+            color: #c8d6e5;
+            padding: 0.5rem;
+            border-radius: 4px;
+            font-family: inherit;
+            font-size: 0.8rem;
+        }
+
+        .field input:focus,
+        .field select:focus {
+            outline: none;
+            border-color: #00d2ff;
+            box-shadow: 0 0 10px rgba(0, 210, 255, 0.3);
+        }
+
+        .btn {
+            background: #00d2ff;
+            color: #0a0e17;
+            border: none;
+            padding: 0.6rem 1rem;
+            border-radius: 4px;
+            font-family: inherit;
+            font-size: 0.8rem;
+            font-weight: bold;
+            cursor: pointer;
+            letter-spacing: 1px;
+            text-transform: uppercase;
+            width: 100%;
+            margin-bottom: 0.5rem;
+            transition: all 0.2s ease;
+        }
+
+        .btn:hover {
+            background: #00b8e6;
+            box-shadow: 0 4px 15px rgba(0, 210, 255, 0.4);
+        }
+
+        .btn:disabled {
+            background: #2a3a4a;
+            color: #6b7b8d;
+            cursor: not-allowed;
+            box-shadow: none;
+        }
+
+        .btn-secondary {
+            background: transparent;
+            color: #00d2ff;
+            border: 1px solid #00d2ff;
+        }
+
+        .btn-secondary:hover {
+            background: rgba(0, 210, 255, 0.15);
+            box-shadow: 0 4px 15px rgba(0, 210, 255, 0.2);
+        }
+
+        /* Stats Panel */
+        .stats-panel {
+            position: fixed;
+            top: 80px;
+            right: 20px;
+            z-index: 90;
+            background: rgba(10, 14, 23, 0.9);
+            border: 1px solid rgba(0, 210, 255, 0.3);
+            border-radius: 8px;
+            padding: 1rem;
+            width: 280px;
+            backdrop-filter: blur(15px);
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.5);
+        }
+
+        .stats-panel h2 {
+            font-size: 0.85rem;
+            color: #00d2ff;
+            margin-bottom: 0.8rem;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        .stat-row {
+            display: flex;
+            justify-content: space-between;
+            padding: 0.5rem 0;
+            border-bottom: 1px solid rgba(30, 42, 58, 0.5);
+            font-size: 0.75rem;
+        }
+
+        .stat-row:last-child {
+            border-bottom: none;
+        }
+
+        .stat-label {
+            color: #6b7b8d;
+            text-transform: uppercase;
+        }
+
+        .stat-value {
+            color: #00d2ff;
+            font-weight: bold;
+        }
+
+        .stat-value.alert {
+            color: #ff4444;
+        }
+
+        .stat-value.warning {
+            color: #ffaa00;
+        }
+
+        /* Alert Banner */
+        .alert-banner {
+            position: fixed;
+            top: 80px;
+            left: 50%;
+            transform: translateX(-50%);
+            z-index: 95;
+            display: none;
+            background: rgba(26, 10, 10, 0.95);
+            border: 2px solid #ff4444;
+            border-radius: 8px;
+            padding: 1rem 1.5rem;
+            min-width: 300px;
+            text-align: center;
+            animation: pulse-border 2s infinite;
+            backdrop-filter: blur(15px);
+            box-shadow: 0 8px 32px rgba(255, 68, 68, 0.4);
+        }
+
+        .alert-banner.visible {
+            display: block;
+        }
+
+        .alert-banner h3 {
+            color: #ff4444;
+            font-size: 0.9rem;
+            margin-bottom: 0.3rem;
+            text-transform: uppercase;
+        }
+
+        .alert-banner p {
+            font-size: 0.75rem;
+            color: #e8a0a0;
+        }
+
+        @keyframes pulse-border {
+
+            0%,
+            100% {
+                border-color: #ff4444;
+            }
+
+            50% {
+                border-color: #ff8888;
+            }
+        }
+
+        /* Satellite Tooltip */
+        .sat-tooltip {
+            position: fixed;
+            z-index: 200;
+            background: rgba(10, 14, 23, 0.98);
+            border: 2px solid #00d2ff;
+            border-radius: 6px;
+            padding: 0.8rem 1rem;
+            pointer-events: none;
+            display: none;
+            backdrop-filter: blur(15px);
+            min-width: 200px;
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.8);
+        }
+
+        .sat-tooltip.visible {
+            display: block;
+        }
+
+        .sat-tooltip .name {
+            font-size: 0.9rem;
+            font-weight: bold;
+            color: #00d2ff;
+            margin-bottom: 0.4rem;
+        }
+
+        .sat-tooltip .info {
+            font-size: 0.7rem;
+            color: #c8d6e5;
+            line-height: 1.4;
+        }
+
+        .sat-tooltip .distance {
+            font-size: 1.1rem;
+            font-weight: bold;
+            color: #fff;
+            margin-top: 0.3rem;
+        }
+
+        .sat-tooltip .distance.close {
+            color: #ff4444;
+        }
+
+        .sat-tooltip .distance.medium {
+            color: #ffaa00;
+        }
+
+        /* Status Message */
+        .status-msg {
+            position: fixed;
+            bottom: 20px;
+            left: 50%;
+            transform: translateX(-50%);
+            z-index: 100;
+            background: rgba(10, 14, 23, 0.9);
+            border: 1px solid rgba(30, 42, 58, 0.8);
+            border-radius: 6px;
+            padding: 0.6rem 1.2rem;
+            font-size: 0.75rem;
+            color: #6b7b8d;
+            backdrop-filter: blur(15px);
+        }
+
+        .status-msg.error {
+            color: #ff4444;
+            border-color: #ff4444;
+        }
+
+        /* Auto-refresh indicator */
+        .refresh-indicator {
+            position: fixed;
+            bottom: 60px;
+            left: 50%;
+            transform: translateX(-50%);
+            z-index: 100;
+            background: rgba(10, 14, 23, 0.9);
+            border: 1px solid rgba(30, 42, 58, 0.8);
+            border-radius: 6px;
+            padding: 0.4rem 0.8rem;
+            font-size: 0.65rem;
+            color: #6b7b8d;
+            backdrop-filter: blur(15px);
+        }
+
+        .refresh-indicator.active {
+            border-color: #00d2ff;
+            color: #00d2ff;
+        }
+
+        /* Legend */
+        .legend {
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            z-index: 90;
+            background: rgba(10, 14, 23, 0.9);
+            border: 1px solid rgba(0, 210, 255, 0.3);
+            border-radius: 8px;
+            padding: 0.8rem;
+            backdrop-filter: blur(15px);
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.5);
+        }
+
+        .legend h3 {
+            font-size: 0.7rem;
+            color: #00d2ff;
+            margin-bottom: 0.5rem;
+            text-transform: uppercase;
+        }
+
+        .legend-item {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            font-size: 0.65rem;
+            margin-bottom: 0.3rem;
+        }
+
+        .legend-item:last-child {
+            margin-bottom: 0;
+        }
+
+        .legend-dot {
+            width: 10px;
+            height: 10px;
+            border-radius: 50%;
+        }
+
+        /* Camera Controls Help */
+        .camera-help {
+            position: fixed;
+            bottom: 100px;
+            left: 20px;
+            z-index: 90;
+            background: rgba(10, 14, 23, 0.9);
+            border: 1px solid rgba(0, 210, 255, 0.3);
+            border-radius: 8px;
+            padding: 0.8rem;
+            backdrop-filter: blur(15px);
+            font-size: 0.65rem;
+            color: #6b7b8d;
+        }
+
+        .camera-help .control-item {
+            margin-bottom: 0.3rem;
+        }
+
+        .camera-help .control-item:last-child {
+            margin-bottom: 0;
+        }
+
+        .camera-help strong {
+            color: #00d2ff;
+        }
+    </style>
+</head>
+
+<body>
+    <header>
+        <h1>3D Satellite Globe</h1>
+        <p>Interactive Real-time Satellite Tracking</p>
+    </header>
+
+    <!-- 3D Canvas -->
+    <div id="canvas-container"></div>
+
+    <!-- Alert Banner -->
+    <div class="alert-banner" id="alertBanner">
+        <h3 id="alertTitle">PROXIMITY ALERT</h3>
+        <p id="alertMsg"></p>
+    </div>
+
+    <!-- Control Panel -->
+    <div class="control-panel">
+        <h2>Observer Position</h2>
+
+        <div class="field">
+            <label>Latitude</label>
+            <input type="number" id="lat" step="any" placeholder="41.39">
+        </div>
+
+        <div class="field">
+            <label>Longitude</label>
+            <input type="number" id="lon" step="any" placeholder="2.17">
+        </div>
+
+        <div class="field">
+            <label>Altitude (m)</label>
+            <input type="number" id="alt" value="0" step="any">
+        </div>
+
+        <div class="field">
+            <label>Category</label>
+            <select id="category">
+                <option value="0">All</option>
+                <option value="1">Brightest</option>
+                <option value="2">ISS</option>
+                <option value="3">Weather</option>
+                <option value="5">GPS</option>
+                <option value="6">Science</option>
+                <option value="12">Starlink</option>
+                <option value="15">Education</option>
+                <option value="18" selected>Amateur Radio</option>
+                <option value="22">GPS Operational</option>
+            </select>
+        </div>
+
+        <div class="field">
+            <label>Search Radius (°)</label>
+            <input type="number" id="radius" value="70" min="0" max="90">
+        </div>
+
+        <div class="field">
+            <label>Alert Threshold (km)</label>
+            <input type="number" id="threshold" value="1000" min="1">
+        </div>
+
+        <div class="field">
+            <label>N2YO API Key</label>
+            <input type="text" id="apiKey" value="KKPFNP-MBTEZH-DRXW8E-5NCO">
+        </div>
+
+        <div class="field">
+            <label>Auto-refresh (seconds)</label>
+            <input type="number" id="refreshInterval" value="10" min="5" max="300">
+        </div>
+
+        <button class="btn btn-secondary" id="geolocateBtn" onclick="geolocate()">Use GPS</button>
+        <button class="btn" id="scanBtn" onclick="scan()">Scan Now</button>
+        <button class="btn btn-secondary" id="toggleRefreshBtn" onclick="toggleAutoRefresh()">Enable
+            Auto-refresh</button>
+    </div>
+
+    <!-- Stats Panel -->
+    <div class="stats-panel">
+        <h2>Statistics</h2>
+        <div class="stat-row">
+            <span class="stat-label">Total Satellites</span>
+            <span class="stat-value" id="statTotal">0</span>
+        </div>
+        <div class="stat-row">
+            <span class="stat-label">Within Threshold</span>
+            <span class="stat-value alert" id="statClose">0</span>
+        </div>
+        <div class="stat-row">
+            <span class="stat-label">Nearest Distance</span>
+            <span class="stat-value" id="statNearest">—</span>
+        </div>
+        <div class="stat-row">
+            <span class="stat-label">Last Update</span>
+            <span class="stat-value" id="statLastUpdate">Never</span>
+        </div>
+        <div class="stat-row">
+            <span class="stat-label">Observer</span>
+            <span class="stat-value" id="statObserver">Not set</span>
+        </div>
+    </div>
+
+    <!-- Legend -->
+    <div class="legend">
+        <h3>Distance Legend</h3>
+        <div class="legend-item">
+            <div class="legend-dot" style="background: #ff4444; box-shadow: 0 0 10px #ff4444;"></div>
+            <span>Critical (≤ threshold)</span>
+        </div>
+        <div class="legend-item">
+            <div class="legend-dot" style="background: #ffaa00; box-shadow: 0 0 10px #ffaa00;"></div>
+            <span>Warning (≤ 3× threshold)</span>
+        </div>
+        <div class="legend-item">
+            <div class="legend-dot" style="background: #00d2ff; box-shadow: 0 0 10px #00d2ff;"></div>
+            <span>Normal (> 3× threshold)</span>
+        </div>
+        <div class="legend-item">
+            <div class="legend-dot" style="background: #00ff88; box-shadow: 0 0 15px #00ff88;"></div>
+            <span>Your Position</span>
+        </div>
+    </div>
+
+    <!-- Camera Controls Help -->
+    <div class="camera-help">
+        <div class="control-item"><strong>Rotate:</strong> Left drag</div>
+        <div class="control-item"><strong>Zoom:</strong> Mouse wheel</div>
+        <div class="control-item"><strong>Pan:</strong> Right drag</div>
+    </div>
+
+    <!-- Satellite Tooltip -->
+    <div class="sat-tooltip" id="satTooltip">
+        <div class="name" id="tooltipName"></div>
+        <div class="info" id="tooltipInfo"></div>
+        <div class="distance" id="tooltipDistance"></div>
+    </div>
+
+    <!-- Status Message -->
+    <div class="status-msg" id="statusMsg">Enter your position or use GPS, then press Scan Now.</div>
+
+    <!-- Refresh Indicator -->
+    <div class="refresh-indicator" id="refreshIndicator">Auto-refresh: Disabled</div>
+
+    <!-- Three.js Library - Using ES Module imports -->
+    <script type="importmap">
+    {
+        "imports": {
+            "three": "https://cdn.jsdelivr.net/npm/three@0.160.0/build/three.module.js",
+            "three/addons/": "https://cdn.jsdelivr.net/npm/three@0.160.0/examples/jsm/"
+        }
+    }
+    </script>
+
+    <script type="module">
+        import * as THREE from 'three';
+        import { OrbitControls } from 'three/addons/controls/OrbitControls.js';
+
+        const EARTH_RADIUS_KM = 6371.0;
+
+        // Three.js scene variables
+        let scene, camera, renderer, controls;
+        let earthMesh, atmosphereMesh;
+        let satelliteMeshes = [];
+        let observerMesh = null;
+        let raycaster, mouse;
+        let hoveredSatellite = null;
+
+        // Data variables
+        let satellites = [];
+        let observerPos = { lat: null, lon: null, alt: 0 };
+        let autoRefreshInterval = null;
+        let nextRefreshTime = null;
+
+        // Initialize Three.js scene
+        function initThreeJS() {
+            const container = document.getElementById('canvas-container');
+
+            // Scene
+            scene = new THREE.Scene();
+
+            // Camera
+            camera = new THREE.PerspectiveCamera(
+                45,
+                window.innerWidth / window.innerHeight,
+                0.1,
+                100000
+            );
+            camera.position.set(15000, 8000, 15000);
+
+            // Renderer
+            renderer = new THREE.WebGLRenderer({ antialias: true, alpha: true });
+            renderer.setSize(window.innerWidth, window.innerHeight);
+            renderer.setPixelRatio(window.devicePixelRatio);
+            container.appendChild(renderer.domElement);
+
+            // Controls
+            controls = new OrbitControls(camera, renderer.domElement);
+            controls.enableDamping = true;
+            controls.dampingFactor = 0.05;
+            controls.minDistance = 7000;
+            controls.maxDistance = 30000;
+            controls.enablePan = true;
+
+            // Raycaster for mouse picking
+            raycaster = new THREE.Raycaster();
+            raycaster.params.Points.threshold = 100; // Increase hit detection range
+            mouse = new THREE.Vector2();
+
+            // Lights
+            const sunLight = new THREE.DirectionalLight(0xffffff, 1.2);
+            sunLight.position.set(5, 3, 5);
+            scene.add(sunLight);
+
+            const ambientLight = new THREE.AmbientLight(0x404040, 0.8);
+            scene.add(ambientLight);
+
+            // Create starfield
+            createStarfield();
+
+            // Create Earth
+            createEarth();
+
+            // Create atmosphere glow
+            createAtmosphere();
+
+            // Event listeners
+            window.addEventListener('resize', onWindowResize);
+            renderer.domElement.addEventListener('mousemove', onMouseMove);
+
+            // Start animation loop
+            animate();
+
+            console.log('Three.js scene initialized');
+        }
+
+        function createStarfield() {
+            const starGeometry = new THREE.BufferGeometry();
+            const starCount = 5000;
+            const positions = new Float32Array(starCount * 3);
+
+            for (let i = 0; i < starCount * 3; i += 3) {
+                const radius = 50000 + Math.random() * 50000;
+                const theta = Math.random() * Math.PI * 2;
+                const phi = Math.acos(2 * Math.random() - 1);
+
+                positions[i] = radius * Math.sin(phi) * Math.cos(theta);
+                positions[i + 1] = radius * Math.sin(phi) * Math.sin(theta);
+                positions[i + 2] = radius * Math.cos(phi);
+            }
+
+            starGeometry.setAttribute('position', new THREE.BufferAttribute(positions, 3));
+
+            const starMaterial = new THREE.PointsMaterial({
+                color: 0xffffff,
+                size: 2,
+                sizeAttenuation: false
+            });
+
+            const stars = new THREE.Points(starGeometry, starMaterial);
+            scene.add(stars);
+        }
+
+        function createEarth() {
+            const geometry = new THREE.SphereGeometry(EARTH_RADIUS_KM, 64, 64);
+
+            // Try to load texture, fallback to solid color
+            const textureLoader = new THREE.TextureLoader();
+            textureLoader.load(
+                'textures/earth_day.jpg',
+                (texture) => {
+                    console.log('Earth texture loaded successfully');
+                    earthMesh.material.map = texture;
+                    earthMesh.material.needsUpdate = true;
+                },
+                undefined,
+                (error) => {
+                    console.warn('Earth texture failed to load, using solid color:', error);
+                }
+            );
+
+            const material = new THREE.MeshPhongMaterial({
+                color: 0x2233ff,
+                emissive: 0x112244,
+                shininess: 5
+            });
+
+            earthMesh = new THREE.Mesh(geometry, material);
+            scene.add(earthMesh);
+        }
+
+        function createAtmosphere() {
+            const geometry = new THREE.SphereGeometry(EARTH_RADIUS_KM * 1.01, 64, 64);
+            const material = new THREE.ShaderMaterial({
+                vertexShader: `
+          varying vec3 vNormal;
+          void main() {
+            vNormal = normalize(normalMatrix * normal);
+            gl_Position = projectionMatrix * modelViewMatrix * vec4(position, 1.0);
+          }
+        `,
+                fragmentShader: `
+          varying vec3 vNormal;
+          void main() {
+            float intensity = pow(0.6 - dot(vNormal, vec3(0.0, 0.0, 1.0)), 2.0);
+            gl_FragColor = vec4(0.3, 0.6, 1.0, 1.0) * intensity;
+          }
+        `,
+                blending: THREE.AdditiveBlending,
+                side: THREE.BackSide,
+                transparent: true
+            });
+
+            atmosphereMesh = new THREE.Mesh(geometry, material);
+            scene.add(atmosphereMesh);
+        }
+
+        function latLonAltToVector3(lat, lon, altKm) {
+            const radius = EARTH_RADIUS_KM + altKm;
+            const phi = (90 - lat) * Math.PI / 180;
+            const theta = (lon + 180) * Math.PI / 180;
+
+            const x = -radius * Math.sin(phi) * Math.cos(theta);
+            const y = radius * Math.cos(phi);
+            const z = radius * Math.sin(phi) * Math.sin(theta);
+
+            return new THREE.Vector3(x, y, z);
+        }
+
+        function clearSatellites() {
+            satelliteMeshes.forEach(mesh => {
+                scene.remove(mesh);
+                mesh.geometry.dispose();
+                mesh.material.dispose();
+            });
+            satelliteMeshes = [];
+        }
+
+        function createSatelliteMeshes(threshold) {
+            clearSatellites();
+
+            satellites.forEach(sat => {
+                const position = latLonAltToVector3(sat.satLat, sat.satLon, sat.satAltKm);
+
+                // Determine color based on distance
+                let color, emissiveIntensity;
+                if (sat.distance <= threshold) {
+                    color = 0xff4444;
+                    emissiveIntensity = 1.5;
+                } else if (sat.distance <= threshold * 3) {
+                    color = 0xffaa00;
+                    emissiveIntensity = 1.0;
+                } else {
+                    color = 0x00d2ff;
+                    emissiveIntensity = 0.8;
+                }
+
+                // Use larger spheres for better visibility
+                const geometry = new THREE.SphereGeometry(100, 16, 16);
+                // Use MeshLambertMaterial for proper emissive support
+                const material = new THREE.MeshLambertMaterial({
+                    color: color,
+                    emissive: color,
+                    emissiveIntensity: emissiveIntensity * 1.5
+                });
+
+                const mesh = new THREE.Mesh(geometry, material);
+                mesh.position.copy(position);
+                mesh.userData.satellite = sat;
+
+                scene.add(mesh);
+                satelliteMeshes.push(mesh);
+            });
+
+            console.log(`Created ${satelliteMeshes.length} satellite meshes`);
+        }
+
+        function updateObserverMarker() {
+            // Remove old marker
+            if (observerMesh) {
+                scene.remove(observerMesh);
+                observerMesh.geometry.dispose();
+                observerMesh.material.dispose();
+            }
+
+            if (observerPos.lat === null || observerPos.lon === null) return;
+
+            const position = latLonAltToVector3(observerPos.lat, observerPos.lon, observerPos.alt / 1000);
+
+            const geometry = new THREE.SphereGeometry(120, 16, 16);
+            const material = new THREE.MeshLambertMaterial({
+                color: 0x00ff88,
+                emissive: 0x00ff88,
+                emissiveIntensity: 3.0
+            });
+
+            observerMesh = new THREE.Mesh(geometry, material);
+            observerMesh.position.copy(position);
+            scene.add(observerMesh);
+        }
+
+        function onWindowResize() {
+            camera.aspect = window.innerWidth / window.innerHeight;
+            camera.updateProjectionMatrix();
+            renderer.setSize(window.innerWidth, window.innerHeight);
+        }
+
+        function onMouseMove(event) {
+            mouse.x = (event.clientX / window.innerWidth) * 2 - 1;
+            mouse.y = -(event.clientY / window.innerHeight) * 2 + 1;
+
+            raycaster.setFromCamera(mouse, camera);
+            const intersects = raycaster.intersectObjects(satelliteMeshes);
+
+            const tooltip = document.getElementById('satTooltip');
+
+            if (intersects.length > 0) {
+                const sat = intersects[0].object.userData.satellite;
+                if (sat !== hoveredSatellite) {
+                    hoveredSatellite = sat;
+                    showTooltip(sat, event.clientX, event.clientY);
+                }
+                renderer.domElement.style.cursor = 'pointer';
+            } else {
+                if (hoveredSatellite) {
+                    hoveredSatellite = null;
+                    tooltip.classList.remove('visible');
+                }
+                renderer.domElement.style.cursor = 'grab';
+            }
+        }
+
+        function showTooltip(sat, x, y) {
+            const threshold = parseFloat(document.getElementById('threshold').value) || 1000;
+            const tooltip = document.getElementById('satTooltip');
+
+            document.getElementById('tooltipName').textContent = sat.name;
+            document.getElementById('tooltipInfo').innerHTML =
+                `NORAD: ${sat.noradId}<br>` +
+                `Altitude: ${sat.satAltKm.toFixed(1)} km<br>` +
+                `Position: ${sat.satLat.toFixed(2)}°, ${sat.satLon.toFixed(2)}°`;
+
+            const distEl = document.getElementById('tooltipDistance');
+            distEl.textContent = `${sat.distance.toFixed(1)} km`;
+            distEl.className = 'distance';
+            if (sat.distance <= threshold) {
+                distEl.classList.add('close');
+            } else if (sat.distance <= threshold * 3) {
+                distEl.classList.add('medium');
+            }
+
+            tooltip.style.left = (x + 15) + 'px';
+            tooltip.style.top = (y + 15) + 'px';
+            tooltip.classList.add('visible');
+        }
+
+        let pulseTime = 0;
+        function animate() {
+            requestAnimationFrame(animate);
+
+            controls.update();
+
+            // Animate observer marker
+            if (observerMesh) {
+                pulseTime += 0.05;
+                const scale = 1 + Math.sin(pulseTime) * 0.2;
+                observerMesh.scale.set(scale, scale, scale);
+            }
+
+            renderer.render(scene, camera);
+        }
+
+        /* ---- Reused functions from 2D version ---- */
+
+        function geolocate() {
+            if (!navigator.geolocation) {
+                showStatus("Geolocation not supported by your browser.", true);
+                return;
+            }
+            const btn = document.getElementById("geolocateBtn");
+            btn.disabled = true;
+            btn.textContent = "Locating…";
+
+            navigator.geolocation.getCurrentPosition(
+                (pos) => {
+                    document.getElementById("lat").value = pos.coords.latitude.toFixed(5);
+                    document.getElementById("lon").value = pos.coords.longitude.toFixed(5);
+                    if (pos.coords.altitude != null) {
+                        document.getElementById("alt").value = pos.coords.altitude.toFixed(1);
+                    }
+                    btn.disabled = false;
+                    btn.textContent = "Use GPS";
+                },
+                (err) => {
+                    showStatus("Geolocation error: " + err.message, true);
+                    btn.disabled = false;
+                    btn.textContent = "Use GPS";
+                },
+                { enableHighAccuracy: true, timeout: 10000 }
+            );
+        }
+
+        function computeDistanceKm(obsLat, obsLon, obsAltKm, satLat, satLon, satAltKm) {
+            const toRad = (d) => (d * Math.PI) / 180;
+            const oLatR = toRad(obsLat);
+            const oLonR = toRad(obsLon);
+            const sLatR = toRad(satLat);
+            const sLonR = toRad(satLon);
+
+            const rObs = EARTH_RADIUS_KM + obsAltKm;
+            const rSat = EARTH_RADIUS_KM + satAltKm;
+
+            const ox = rObs * Math.cos(oLatR) * Math.cos(oLonR);
+            const oy = rObs * Math.cos(oLatR) * Math.sin(oLonR);
+            const oz = rObs * Math.sin(oLatR);
+
+            const sx = rSat * Math.cos(sLatR) * Math.cos(sLonR);
+            const sy = rSat * Math.cos(sLatR) * Math.sin(sLonR);
+            const sz = rSat * Math.sin(sLatR);
+
+            return Math.sqrt((ox - sx) ** 2 + (oy - sy) ** 2 + (oz - sz) ** 2);
+        }
+
+        async function scan() {
+            const lat = parseFloat(document.getElementById("lat").value);
+            const lon = parseFloat(document.getElementById("lon").value);
+            const alt = parseFloat(document.getElementById("alt").value) || 0;
+            const radius = parseInt(document.getElementById("radius").value) || 70;
+            const category = document.getElementById("category").value;
+            const threshold = parseFloat(document.getElementById("threshold").value) || 1000;
+            const apiKey = document.getElementById("apiKey").value.trim();
+
+            if (isNaN(lat) || isNaN(lon)) {
+                showStatus("Please enter valid latitude and longitude.", true);
+                return;
+            }
+
+            observerPos = { lat, lon, alt };
+
+            const btn = document.getElementById("scanBtn");
+            btn.disabled = true;
+            btn.textContent = "Scanning…";
+            showStatus("Fetching satellites from N2YO…", false);
+            document.getElementById("alertBanner").classList.remove("visible");
+
+            const obsAltKm = alt / 1000.0;
+
+            try {
+                const apiUrl = `/api/above/${lat}/${lon}/${alt}/${radius}/${category}?apiKey=${apiKey}`;
+                const resp = await fetch(apiUrl);
+                if (!resp.ok) throw new Error(`HTTP ${resp.status}`);
+                const data = await resp.json();
+
+                const satData = data.above || [];
+                if (satData.length === 0) {
+                    showStatus("No satellites found above your position.", false);
+                    satellites = [];
+                    updateStats();
+                    clearSatellites();
+                    updateObserverMarker();
+                    btn.disabled = false;
+                    btn.textContent = "Scan Now";
+                    return;
+                }
+
+                satellites = satData.map((sat) => {
+                    const satLat = sat.satlat || 0;
+                    const satLon = sat.satlng || 0;
+                    const satAltKm = sat.satalt || 0;
+                    const distance = computeDistanceKm(lat, lon, obsAltKm, satLat, satLon, satAltKm);
+                    return {
+                        name: sat.satname || "Unknown",
+                        noradId: sat.satid || "?",
+                        satLat,
+                        satLon,
+                        satAltKm,
+                        distance,
+                    };
+                });
+
+                satellites.sort((a, b) => a.distance - b.distance);
+                satellites = satellites.filter((s) => s.distance <= 10000);
+
+                if (satellites.length === 0) {
+                    showStatus("No satellites found within 10,000 km.", false);
+                    updateStats();
+                    clearSatellites();
+                    updateObserverMarker();
+                    btn.disabled = false;
+                    btn.textContent = "Scan Now";
+                    return;
+                }
+
+                const closeSats = satellites.filter((s) => s.distance <= threshold);
+                showAlert(closeSats, threshold);
+
+                updateStats();
+                createSatelliteMeshes(threshold);
+                updateObserverMarker();
+                showStatus(`Found ${satellites.length} satellites`, false);
+
+            } catch (err) {
+                showStatus("Error: " + err.message, true);
+                satellites = [];
+                updateStats();
+                clearSatellites();
+            }
+
+            btn.disabled = false;
+            btn.textContent = "Scan Now";
+        }
+
+        function showAlert(closeSats, threshold) {
+            const banner = document.getElementById("alertBanner");
+            if (closeSats.length === 0) {
+                banner.classList.remove("visible");
+                return;
+            }
+            const nearest = closeSats[0];
+            document.getElementById("alertTitle").textContent =
+                `PROXIMITY ALERT — ${closeSats.length} satellite${closeSats.length > 1 ? "s" : ""} within ${threshold} km`;
+            document.getElementById("alertMsg").textContent =
+                `Nearest: ${nearest.name} (NORAD ${nearest.noradId}) at ${nearest.distance.toFixed(1)} km`;
+            banner.classList.add("visible");
+
+            if (Notification.permission === "granted") {
+                new Notification("Satellite Proximity Alert", {
+                    body: `${nearest.name} at ${nearest.distance.toFixed(1)} km`,
+                });
+            } else if (Notification.permission !== "denied") {
+                Notification.requestPermission();
+            }
+        }
+
+        function updateStats() {
+            const threshold = parseFloat(document.getElementById("threshold").value) || 1000;
+            const closeSats = satellites.filter((s) => s.distance <= threshold);
+
+            document.getElementById("statTotal").textContent = satellites.length;
+            document.getElementById("statClose").textContent = closeSats.length;
+
+            if (satellites.length > 0) {
+                document.getElementById("statNearest").textContent = satellites[0].distance.toFixed(1) + " km";
+            } else {
+                document.getElementById("statNearest").textContent = "—";
+            }
+
+            const now = new Date();
+            document.getElementById("statLastUpdate").textContent = now.toLocaleTimeString();
+
+            if (observerPos.lat !== null) {
+                document.getElementById("statObserver").textContent =
+                    `${observerPos.lat.toFixed(2)}°, ${observerPos.lon.toFixed(2)}°`;
+            }
+        }
+
+        function toggleAutoRefresh() {
+            const btn = document.getElementById("toggleRefreshBtn");
+            const indicator = document.getElementById("refreshIndicator");
+
+            if (autoRefreshInterval) {
+                clearInterval(autoRefreshInterval);
+                autoRefreshInterval = null;
+                nextRefreshTime = null;
+                btn.textContent = "Enable Auto-refresh";
+                indicator.textContent = "Auto-refresh: Disabled";
+                indicator.classList.remove("active");
+            } else {
+                const interval = parseInt(document.getElementById("refreshInterval").value) || 10;
+                autoRefreshInterval = setInterval(() => {
+                    scan();
+                }, interval * 1000);
+
+                btn.textContent = "Disable Auto-refresh";
+                indicator.classList.add("active");
+                updateRefreshIndicator();
+
+                setInterval(updateRefreshIndicator, 1000);
+            }
+        }
+
+        function updateRefreshIndicator() {
+            if (!autoRefreshInterval) return;
+
+            const interval = parseInt(document.getElementById("refreshInterval").value) || 10;
+            const indicator = document.getElementById("refreshIndicator");
+
+            if (!nextRefreshTime) {
+                nextRefreshTime = Date.now() + (interval * 1000);
+            }
+
+            const remaining = Math.max(0, Math.ceil((nextRefreshTime - Date.now()) / 1000));
+
+            if (remaining === 0) {
+                nextRefreshTime = Date.now() + (interval * 1000);
+            }
+
+            indicator.textContent = `Auto-refresh: ${remaining}s`;
+        }
+
+        function showStatus(msg, isError) {
+            const statusEl = document.getElementById("statusMsg");
+            statusEl.textContent = msg;
+            if (isError) {
+                statusEl.classList.add("error");
+            } else {
+                statusEl.classList.remove("error");
+            }
+        }
+
+        // Initialize Three.js when page loads
+        window.addEventListener('load', () => {
+            initThreeJS();
+            console.log('3D Satellite Globe ready');
+        });
+
+        // Expose functions to window for HTML onclick handlers
+        window.geolocate = geolocate;
+        window.scan = scan;
+        window.toggleAutoRefresh = toggleAutoRefresh;
+    </script>
+</body>
+
+</html>
