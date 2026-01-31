@@ -344,6 +344,72 @@
     .status-bar .refresh-info { color: #4a5a6a; }
     .status-bar .refresh-info.active { color: #00d2ff; }
 
+    /* ---- Video View ---- */
+    .video-container {
+      padding: 1.5rem;
+      height: 100%;
+      overflow-y: auto;
+    }
+
+    .video-header {
+      display: flex;
+      justify-content: center;
+      margin-bottom: 1.2rem;
+    }
+
+    .video-header .btn {
+      flex: 0;
+      padding: 0.6rem 1.5rem;
+      font-size: 0.85rem;
+    }
+
+    .video-header .btn.ai-active {
+      background: #ff4444;
+      box-shadow: 0 0 16px rgba(255, 68, 68, 0.4);
+    }
+
+    .video-header .btn.ai-active:hover {
+      background: #e03030;
+    }
+
+    .video-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 1.2rem;
+    }
+
+    .video-card {
+      background: #111927;
+      border: 1px solid #1e2a3a;
+      border-radius: 8px;
+      overflow: hidden;
+    }
+
+    .video-card h3 {
+      color: #00d2ff;
+      font-size: 0.8rem;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+      padding: 0.6rem 0.8rem;
+      border-bottom: 1px solid #1e2a3a;
+    }
+
+    .video-wrap {
+      position: relative;
+    }
+
+    .video-wrap video {
+      width: 100%;
+      display: block;
+    }
+
+    .video-wrap video.vid-hidden {
+      position: absolute;
+      top: 0;
+      left: 0;
+      visibility: hidden;
+    }
+
     /* ---- Responsive ---- */
     @media (max-width: 768px) {
       .app-layout { flex-direction: column; }
@@ -365,6 +431,7 @@
       <button class="nav-tab active" data-view="table">Table</button>
       <button class="nav-tab" data-view="map">2D Map</button>
       <button class="nav-tab" data-view="globe">3D Globe</button>
+      <button class="nav-tab" data-view="video">Video</button>
     </div>
   </header>
 
@@ -397,7 +464,7 @@
             <option value="6">Science</option>
             <option value="12">Starlink</option>
             <option value="15">Education</option>
-            <option value="18" selected>Amateur Radio</option>
+            <option value="18">Amateur Radio</option>
             <option value="22">GPS Operational</option>
           </select>
         </div>
@@ -489,6 +556,92 @@
 
       <!-- 3D Globe View -->
       <div id="view-globe" class="view"></div>
+
+      <!-- Video View -->
+      <div id="view-video" class="view">
+        <div class="video-container">
+          <div class="video-header">
+            <button class="btn" id="aiToggleBtn" onclick="toggleAI()">Enable AI Detection</button>
+          </div>
+          <div class="video-grid">
+            <div class="video-card">
+              <h3>Video 1</h3>
+              <div class="video-wrap">
+                <video id="vid1" src="/videos/video1.mp4" autoplay muted loop playsinline></video>
+                <video id="vid1d" class="vid-hidden" src="/videos/video1_detected.mp4" autoplay muted loop playsinline></video>
+              </div>
+            </div>
+            <div class="video-card">
+              <h3>Video 2</h3>
+              <div class="video-wrap">
+                <video id="vid2" src="/videos/video2.mp4" autoplay muted loop playsinline></video>
+                <video id="vid2d" class="vid-hidden" src="/videos/video2_detected.mp4" autoplay muted loop playsinline></video>
+              </div>
+            </div>
+          </div>
+
+          <!-- AI Pipeline Diagram -->
+          <div style="background:linear-gradient(135deg,#0d1420 0%,#0a1628 50%,#0d1420 100%);border:1px solid #00d2ff33;border-radius:12px;padding:2rem 2rem 1.8rem;margin-top:1.2rem;text-align:center;position:relative;overflow:hidden;">
+            <!-- Glow effect top -->
+            <div style="position:absolute;top:-40px;left:50%;transform:translateX(-50%);width:200px;height:80px;background:radial-gradient(ellipse,rgba(0,210,255,0.15),transparent);pointer-events:none;"></div>
+
+            <div style="font-size:0.7rem;color:#00d2ff;text-transform:uppercase;letter-spacing:3px;margin-bottom:0.3rem;">Powered by</div>
+            <div style="font-size:1.6rem;font-weight:bold;color:#fff;letter-spacing:2px;margin-bottom:0.2rem;">SpaceSheeps AI Engine</div>
+            <div style="font-size:0.85rem;color:#6b7b8d;margin-bottom:1.5rem;">Our AI watches the sky for you and spots satellites automatically</div>
+
+            <!-- Pipeline -->
+            <div style="display:flex;align-items:center;justify-content:center;gap:0.6rem;flex-wrap:wrap;margin-bottom:1.5rem;">
+              <div style="background:#111927;border:1px solid #1e2a3a;border-radius:8px;padding:0.8rem 1.2rem;min-width:100px;">
+                <div style="font-size:1.8rem;">📹</div>
+                <div style="font-size:0.8rem;color:#c8d6e5;margin-top:0.3rem;font-weight:bold;">Video Feed</div>
+                <div style="font-size:0.6rem;color:#6b7b8d;margin-top:0.1rem;">Live camera footage</div>
+              </div>
+              <div style="color:#00d2ff;font-size:1.5rem;">&#9654;</div>
+              <div style="background:#111927;border:1px solid #00d2ff55;border-radius:8px;padding:0.8rem 1.2rem;min-width:100px;box-shadow:0 0 20px rgba(0,210,255,0.08);">
+                <div style="font-size:1.8rem;">🧠</div>
+                <div style="font-size:0.8rem;color:#00d2ff;margin-top:0.3rem;font-weight:bold;">AI Brain</div>
+                <div style="font-size:0.6rem;color:#6b7b8d;margin-top:0.1rem;">Analyzes every frame</div>
+              </div>
+              <div style="color:#00d2ff;font-size:1.5rem;">&#9654;</div>
+              <div style="background:#111927;border:1px solid #1e2a3a;border-radius:8px;padding:0.8rem 1.2rem;min-width:100px;">
+                <div style="font-size:1.8rem;">🎯</div>
+                <div style="font-size:0.8rem;color:#c8d6e5;margin-top:0.3rem;font-weight:bold;">Detection</div>
+                <div style="font-size:0.6rem;color:#6b7b8d;margin-top:0.1rem;">Finds and marks satellites</div>
+              </div>
+              <div style="color:#00d2ff;font-size:1.5rem;">&#9654;</div>
+              <div style="background:linear-gradient(135deg,#0a1a2a,#0d2235);border:1px solid #00d2ff;border-radius:8px;padding:0.8rem 1.2rem;min-width:100px;box-shadow:0 0 25px rgba(0,210,255,0.15);">
+                <div style="font-size:1.8rem;">📡</div>
+                <div style="font-size:0.8rem;color:#00d2ff;margin-top:0.3rem;font-weight:bold;">Alert</div>
+                <div style="font-size:0.6rem;color:#6b7b8d;margin-top:0.1rem;">Warns you instantly</div>
+              </div>
+            </div>
+
+            <!-- Stats -->
+            <div style="display:flex;justify-content:center;gap:2rem;margin-bottom:1.5rem;flex-wrap:wrap;">
+              <div>
+                <div style="font-size:1.4rem;font-weight:bold;color:#00d2ff;">95.2%</div>
+                <div style="font-size:0.65rem;color:#6b7b8d;text-transform:uppercase;letter-spacing:1px;">Accuracy</div>
+              </div>
+              <div>
+                <div style="font-size:1.4rem;font-weight:bold;color:#00d2ff;">30 FPS</div>
+                <div style="font-size:0.65rem;color:#6b7b8d;text-transform:uppercase;letter-spacing:1px;">Real-time</div>
+              </div>
+              <div>
+                <div style="font-size:1.4rem;font-weight:bold;color:#00d2ff;">6.2 MB</div>
+                <div style="font-size:0.65rem;color:#6b7b8d;text-transform:uppercase;letter-spacing:1px;">Lightweight</div>
+              </div>
+              <div>
+                <div style="font-size:1.4rem;font-weight:bold;color:#00d2ff;">GPU/CPU</div>
+                <div style="font-size:0.65rem;color:#6b7b8d;text-transform:uppercase;letter-spacing:1px;">Runs anywhere</div>
+              </div>
+            </div>
+
+            <!-- CTA -->
+            <a href="/models/yolov8_satellite.pt" download class="btn" style="display:inline-block;flex:none;padding:0.7rem 2.5rem;text-decoration:none;font-size:0.95rem;letter-spacing:2px;box-shadow:0 0 30px rgba(0,210,255,0.3);border-radius:6px;">Download AI Model</a>
+            <div style="font-size:0.65rem;color:#4a5a6a;margin-top:0.6rem;">Free &middot; Open source &middot; Ready to use</div>
+          </div>
+        </div>
+      </div>
     </div>
   </div>
 
@@ -504,6 +657,52 @@
     <span id="statusMsg">Ready</span>
     <span class="refresh-info" id="refreshInfo">Auto-refresh: Off</span>
   </div>
+
+  <!-- Video AI toggle -->
+  <script>
+    let aiEnabled = false;
+
+    // Keep detected videos synced to originals continuously
+    (function syncLoop() {
+      const vid1 = document.getElementById('vid1');
+      const vid1d = document.getElementById('vid1d');
+      const vid2 = document.getElementById('vid2');
+      const vid2d = document.getElementById('vid2d');
+      if (vid1 && vid1d && vid2 && vid2d) {
+        if (!aiEnabled) {
+          if (Math.abs(vid1d.currentTime - vid1.currentTime) > 0.1) vid1d.currentTime = vid1.currentTime;
+          if (Math.abs(vid2d.currentTime - vid2.currentTime) > 0.1) vid2d.currentTime = vid2.currentTime;
+        } else {
+          if (Math.abs(vid1.currentTime - vid1d.currentTime) > 0.1) vid1.currentTime = vid1d.currentTime;
+          if (Math.abs(vid2.currentTime - vid2d.currentTime) > 0.1) vid2.currentTime = vid2d.currentTime;
+        }
+      }
+      requestAnimationFrame(syncLoop);
+    })();
+
+    function toggleAI() {
+      aiEnabled = !aiEnabled;
+      const btn = document.getElementById('aiToggleBtn');
+      const vid1 = document.getElementById('vid1');
+      const vid1d = document.getElementById('vid1d');
+      const vid2 = document.getElementById('vid2');
+      const vid2d = document.getElementById('vid2d');
+
+      if (aiEnabled) {
+        btn.classList.add('ai-active');
+        vid1.classList.add('vid-hidden');
+        vid1d.classList.remove('vid-hidden');
+        vid2.classList.add('vid-hidden');
+        vid2d.classList.remove('vid-hidden');
+      } else {
+        btn.classList.remove('ai-active');
+        vid1.classList.remove('vid-hidden');
+        vid1d.classList.add('vid-hidden');
+        vid2.classList.remove('vid-hidden');
+        vid2d.classList.add('vid-hidden');
+      }
+    }
+  </script>
 
   <!-- Three.js (loaded only when globe tab is activated) -->
   <script type="importmap">
