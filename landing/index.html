@@ -567,15 +567,15 @@
             <div class="video-card">
               <h3>Video 1</h3>
               <div class="video-wrap">
-                <video id="vid1" src="/videos/video1.mp4" autoplay muted loop playsinline></video>
-                <video id="vid1d" class="vid-hidden" src="/videos/video1_detected.mp4" autoplay muted loop playsinline></video>
+                <video id="vid1" src="/videos/daniela_video.mp4" autoplay muted loop playsinline></video>
+                <video id="vid1d" class="vid-hidden" src="/videos/daniela_video_detected.mp4" autoplay muted loop playsinline></video>
               </div>
             </div>
             <div class="video-card">
               <h3>Video 2</h3>
               <div class="video-wrap">
-                <video id="vid2" src="/videos/video2.mp4" autoplay muted loop playsinline></video>
-                <video id="vid2d" class="vid-hidden" src="/videos/video2_detected.mp4" autoplay muted loop playsinline></video>
+                <video id="vid2" src="/videos/chino_video.mp4" autoplay muted loop playsinline></video>
+                <video id="vid2d" class="vid-hidden" src="/videos/chino_video_detected.mp4" autoplay muted loop playsinline></video>
               </div>
             </div>
           </div>
@@ -690,12 +690,14 @@
 
       if (aiEnabled) {
         btn.classList.add('ai-active');
+        btn.textContent = 'Disable AI Detection';
         vid1.classList.add('vid-hidden');
         vid1d.classList.remove('vid-hidden');
         vid2.classList.add('vid-hidden');
         vid2d.classList.remove('vid-hidden');
       } else {
         btn.classList.remove('ai-active');
+        btn.textContent = 'Enable AI Detection';
         vid1.classList.remove('vid-hidden');
         vid1d.classList.add('vid-hidden');
         vid2.classList.remove('vid-hidden');

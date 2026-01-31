@@ -3,110 +3,98 @@ import cv2
 from pathlib import Path
 from tqdm import tqdm
 
+BOX_COLORS = [
+    (0, 255, 0),    # green
+    (255, 0, 0),    # blue
+    (0, 0, 255),    # red
+    (0, 255, 255),  # yellow
+    (255, 0, 255),  # magenta
+    (255, 255, 0),  # cyan
+]
+
+
 def process_video_to_yolo_format(model, video_path, output_dir, class_names):
     """
-    Process a video file and save frames with detections in YOLO format
-    
-    Args:
-        model: YOLO model instance
-        video_path: Path to input video file
-        output_dir: Directory to save results
-        class_names: List of class names
+    Process a video file: run YOLO detection and output an annotated video.
     """
     video_name = Path(video_path).stem
     video_output_dir = output_dir / video_name
-    
-    # Create subdirectories for images and labels
-    images_dir = video_output_dir / 'images'
-    labels_dir = video_output_dir / 'labels'
-    images_dir.mkdir(parents=True, exist_ok=True)
-    labels_dir.mkdir(parents=True, exist_ok=True)
-    
+    video_output_dir.mkdir(parents=True, exist_ok=True)
+
+    output_video_path = video_output_dir / f"{video_name}_detected.mp4"
+
     print(f"\nProcessing: {video_path}")
-    print(f"Output directory: {video_output_dir}")
+    print(f"Output video: {output_video_path}")
     print("="*60)
-    
-    # Open the video file
+
     cap = cv2.VideoCapture(video_path)
-    
-    # Get video properties
+
     fps = int(cap.get(cv2.CAP_PROP_FPS))
     width = int(cap.get(cv2.CAP_PROP_FRAME_WIDTH))
     height = int(cap.get(cv2.CAP_PROP_FRAME_HEIGHT))
     total_frames = int(cap.get(cv2.CAP_PROP_FRAME_COUNT))
-    
+
     print(f"Video properties:")
     print(f"  - FPS: {fps}")
     print(f"  - Resolution: {width}x{height}")
     print(f"  - Total frames: {total_frames}")
     print("="*60)
-    
+
+    fourcc = cv2.VideoWriter_fourcc(*'mp4v')
+    out = cv2.VideoWriter(str(output_video_path), fourcc, fps, (width, height))
+
     frame_count = 0
-    saved_count = 0
     detection_count = 0
-    
-    # Process frames with progress bar
+
     pbar = tqdm(total=total_frames, desc=f"Processing {video_name}")
-    
+
     try:
         while cap.isOpened():
             ret, frame = cap.read()
-            
+
             if not ret:
                 break
-            
-            # Run inference on the frame
+
             results = model(frame, conf=0.25, verbose=False)
             result = results[0]
-            
-            # Frame filename (with leading zeros for proper sorting)
-            frame_filename = f"frame_{frame_count:06d}"
-            image_path = images_dir / f"{frame_filename}.jpg"
-            label_path = labels_dir / f"{frame_filename}.txt"
-            
-            # Save the original frame without any drawings
-            cv2.imwrite(str(image_path), frame)
-            
-            # Save YOLO format annotations
-            with open(label_path, 'w') as f:
-                if len(result.boxes) > 0:
-                    detection_count += 1
-                    
-                    for box in result.boxes:
-                        # Get box coordinates in xyxy format
-                        xyxy = box.xyxy[0].cpu().numpy()
-                        x1, y1, x2, y2 = xyxy
-                        
-                        # Convert to YOLO format (normalized xywh)
-                        x_center = ((x1 + x2) / 2) / width
-                        y_center = ((y1 + y2) / 2) / height
-                        box_width = (x2 - x1) / width
-                        box_height = (y2 - y1) / height
-                        
-                        # Get class id and confidence
-                        class_id = int(box.cls[0].cpu().numpy())
-                        confidence = float(box.conf[0].cpu().numpy())
-                        
-                        # Write YOLO format: class_id x_center y_center width height
-                        f.write(f"{class_id} {x_center:.6f} {y_center:.6f} {box_width:.6f} {box_height:.6f}\n")
-            
-            saved_count += 1
+
+            if len(result.boxes) > 0:
+                detection_count += 1
+
+                for box in result.boxes:
+                    xyxy = box.xyxy[0].cpu().numpy()
+                    x1, y1, x2, y2 = int(xyxy[0]), int(xyxy[1]), int(xyxy[2]), int(xyxy[3])
+
+                    class_id = int(box.cls[0].cpu().numpy())
+                    confidence = float(box.conf[0].cpu().numpy())
+                    color = BOX_COLORS[class_id % len(BOX_COLORS)]
+
+                    cv2.rectangle(frame, (x1, y1), (x2, y2), color, 2)
+
+                    label = f"{class_names[class_id]} {confidence:.2f}"
+                    (tw, th), _ = cv2.getTextSize(label, cv2.FONT_HERSHEY_SIMPLEX, 0.5, 1)
+                    cv2.rectangle(frame, (x1, y1 - th - 6), (x1 + tw, y1), color, -1)
+                    cv2.putText(frame, label, (x1, y1 - 4),
+                                cv2.FONT_HERSHEY_SIMPLEX, 0.5, (255, 255, 255), 1, cv2.LINE_AA)
+
+            out.write(frame)
             frame_count += 1
             pbar.update(1)
-    
+
     except KeyboardInterrupt:
         print("\nProcessing interrupted by user")
-    
+
     finally:
         cap.release()
+        out.release()
         pbar.close()
-    
+
     print(f"\nCompleted processing {video_name}:")
     print(f"  - Total frames: {frame_count}")
     print(f"  - Frames with detections: {detection_count}")
-    print(f"  - Images saved: {saved_count}")
+    print(f"  - Output video: {output_video_path}")
     print("="*60)
-    
+
     return frame_count, detection_count
 
 
@@ -127,7 +115,7 @@ if __name__ == '__main__':
     output_dir.mkdir(exist_ok=True)
     
     # Video files to process
-    video_files = ['video1.mp4', 'video2.mp4']
+    video_files = ['chino_video.mp4']
     
     # Check which videos exist
     existing_videos = [v for v in video_files if Path(v).exists()]
@@ -167,7 +155,6 @@ if __name__ == '__main__':
     for video_file in existing_videos:
         video_name = Path(video_file).stem
         print(f"  └── {video_name}/")
-        print(f"      ├── images/     (annotated frame images)")
-        print(f"      └── labels/     (YOLO format .txt files)")
+        print(f"      └── {video_name}_detected.mp4")
     print("="*60)
 
