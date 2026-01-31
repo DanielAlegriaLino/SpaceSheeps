@@ -1,11 +1,16 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Satellite Proximity Alert</title>
   <style>
-    * { margin: 0; padding: 0; box-sizing: border-box; }
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
 
     body {
       font-family: 'Courier New', monospace;
@@ -60,7 +65,10 @@
       transition: color 0.2s, border-color 0.2s;
     }
 
-    .nav-tab:hover { color: #c8d6e5; }
+    .nav-tab:hover {
+      color: #c8d6e5;
+    }
+
     .nav-tab.active {
       color: #00d2ff;
       border-bottom-color: #00d2ff;
@@ -114,7 +122,8 @@
       text-transform: uppercase;
     }
 
-    .field input, .field select {
+    .field input,
+    .field select {
       background: #0a0e17;
       border: 1px solid #1e2a3a;
       color: #c8d6e5;
@@ -125,7 +134,8 @@
       width: 100%;
     }
 
-    .field input:focus, .field select:focus {
+    .field input:focus,
+    .field select:focus {
       outline: none;
       border-color: #00d2ff;
       box-shadow: 0 0 8px rgba(0, 210, 255, 0.2);
@@ -152,8 +162,17 @@
       transition: background 0.2s, box-shadow 0.2s;
     }
 
-    .btn:hover { background: #00b8e6; box-shadow: 0 2px 12px rgba(0,210,255,0.3); }
-    .btn:disabled { background: #2a3a4a; color: #6b7b8d; cursor: not-allowed; box-shadow: none; }
+    .btn:hover {
+      background: #00b8e6;
+      box-shadow: 0 2px 12px rgba(0, 210, 255, 0.3);
+    }
+
+    .btn:disabled {
+      background: #2a3a4a;
+      color: #6b7b8d;
+      cursor: not-allowed;
+      box-shadow: none;
+    }
 
     .btn-secondary {
       background: transparent;
@@ -161,7 +180,9 @@
       border: 1px solid #00d2ff;
     }
 
-    .btn-secondary:hover { background: rgba(0, 210, 255, 0.1); }
+    .btn-secondary:hover {
+      background: rgba(0, 210, 255, 0.1);
+    }
 
     /* Stats */
     .stat-row {
@@ -172,10 +193,23 @@
       font-size: 0.75rem;
     }
 
-    .stat-row:last-child { border-bottom: none; }
-    .stat-label { color: #6b7b8d; text-transform: uppercase; }
-    .stat-value { color: #00d2ff; font-weight: bold; }
-    .stat-value.alert { color: #ff4444; }
+    .stat-row:last-child {
+      border-bottom: none;
+    }
+
+    .stat-label {
+      color: #6b7b8d;
+      text-transform: uppercase;
+    }
+
+    .stat-value {
+      color: #00d2ff;
+      font-weight: bold;
+    }
+
+    .stat-value.alert {
+      color: #ff4444;
+    }
 
     /* Legend */
     .legend-item {
@@ -203,7 +237,9 @@
       animation: pulse-border 2s infinite;
     }
 
-    .alert-banner.visible { display: block; }
+    .alert-banner.visible {
+      display: block;
+    }
 
     .alert-banner h3 {
       color: #ff4444;
@@ -217,8 +253,15 @@
     }
 
     @keyframes pulse-border {
-      0%, 100% { border-color: #ff4444; }
-      50% { border-color: #ff8888; }
+
+      0%,
+      100% {
+        border-color: #ff4444;
+      }
+
+      50% {
+        border-color: #ff8888;
+      }
     }
 
     /* ---- Main Content Area ---- */
@@ -233,10 +276,13 @@
       width: 100%;
       height: 100%;
       position: absolute;
-      top: 0; left: 0;
+      top: 0;
+      left: 0;
     }
 
-    .view.active { display: block; }
+    .view.active {
+      display: block;
+    }
 
     /* ---- Table View ---- */
     #view-table {
@@ -268,9 +314,18 @@
       border-bottom: 1px solid #111927;
     }
 
-    .sat-table tr.close td { color: #ff4444; font-weight: bold; }
-    .sat-table tr.medium td { color: #ffaa00; }
-    .sat-table tr:hover td { background: rgba(0, 210, 255, 0.05); }
+    .sat-table tr.close td {
+      color: #ff4444;
+      font-weight: bold;
+    }
+
+    .sat-table tr.medium td {
+      color: #ffaa00;
+    }
+
+    .sat-table tr:hover td {
+      background: rgba(0, 210, 255, 0.05);
+    }
 
     .distance-badge {
       display: inline-block;
@@ -280,9 +335,20 @@
       font-weight: bold;
     }
 
-    .distance-badge.close { background: #3a0a0a; color: #ff4444; }
-    .distance-badge.medium { background: #2a1a00; color: #ffaa00; }
-    .distance-badge.far { background: #0a1a2a; color: #00d2ff; }
+    .distance-badge.close {
+      background: #3a0a0a;
+      color: #ff4444;
+    }
+
+    .distance-badge.medium {
+      background: #2a1a00;
+      color: #ffaa00;
+    }
+
+    .distance-badge.far {
+      background: #0a1a2a;
+      color: #00d2ff;
+    }
 
     .table-summary {
       margin-top: 0.8rem;
@@ -300,11 +366,20 @@
     }
 
     /* ---- 2D Map View ---- */
-    #view-map { background: #0a0e17; }
-    #worldMapCanvas { width: 100%; height: 100%; display: block; }
+    #view-map {
+      background: #0a0e17;
+    }
+
+    #worldMapCanvas {
+      width: 100%;
+      height: 100%;
+      display: block;
+    }
 
     /* ---- 3D Globe View ---- */
-    #view-globe { background: #000; }
+    #view-globe {
+      background: #000;
+    }
 
     /* ---- Tooltip ---- */
     .sat-tooltip {
@@ -320,12 +395,37 @@
       box-shadow: 0 8px 24px rgba(0, 0, 0, 0.7);
     }
 
-    .sat-tooltip.visible { display: block; }
-    .sat-tooltip .tt-name { font-size: 0.85rem; font-weight: bold; color: #00d2ff; margin-bottom: 0.3rem; }
-    .sat-tooltip .tt-info { font-size: 0.7rem; color: #c8d6e5; line-height: 1.4; }
-    .sat-tooltip .tt-dist { font-size: 1rem; font-weight: bold; color: #fff; margin-top: 0.3rem; }
-    .sat-tooltip .tt-dist.close { color: #ff4444; }
-    .sat-tooltip .tt-dist.medium { color: #ffaa00; }
+    .sat-tooltip.visible {
+      display: block;
+    }
+
+    .sat-tooltip .tt-name {
+      font-size: 0.85rem;
+      font-weight: bold;
+      color: #00d2ff;
+      margin-bottom: 0.3rem;
+    }
+
+    .sat-tooltip .tt-info {
+      font-size: 0.7rem;
+      color: #c8d6e5;
+      line-height: 1.4;
+    }
+
+    .sat-tooltip .tt-dist {
+      font-size: 1rem;
+      font-weight: bold;
+      color: #fff;
+      margin-top: 0.3rem;
+    }
+
+    .sat-tooltip .tt-dist.close {
+      color: #ff4444;
+    }
+
+    .sat-tooltip .tt-dist.medium {
+      color: #ffaa00;
+    }
 
     /* ---- Status Bar ---- */
     .status-bar {
@@ -340,9 +440,17 @@
       z-index: 100;
     }
 
-    .status-bar.error { color: #ff4444; }
-    .status-bar .refresh-info { color: #4a5a6a; }
-    .status-bar .refresh-info.active { color: #00d2ff; }
+    .status-bar.error {
+      color: #ff4444;
+    }
+
+    .status-bar .refresh-info {
+      color: #4a5a6a;
+    }
+
+    .status-bar .refresh-info.active {
+      color: #00d2ff;
+    }
 
     /* ---- Video View ---- */
     .video-container {
@@ -412,7 +520,10 @@
 
     /* ---- Responsive ---- */
     @media (max-width: 768px) {
-      .app-layout { flex-direction: column; }
+      .app-layout {
+        flex-direction: column;
+      }
+
       .sidebar {
         width: 100%;
         min-width: 0;
@@ -423,6 +534,7 @@
     }
   </style>
 </head>
+
 <body>
   <header>
     <h1>Satellite Proximity Alert</h1>
@@ -432,6 +544,7 @@
       <button class="nav-tab" data-view="map">2D Map</button>
       <button class="nav-tab" data-view="globe">3D Globe</button>
       <button class="nav-tab" data-view="video">Video</button>
+      <button class="nav-tab" data-view="camera">Camera</button>
     </div>
   </header>
 
@@ -568,48 +681,62 @@
               <h3>Video 1</h3>
               <div class="video-wrap">
                 <video id="vid1" src="/videos/daniela_video.mp4" autoplay muted loop playsinline></video>
-                <video id="vid1d" class="vid-hidden" src="/videos/daniela_video_detected.mp4" autoplay muted loop playsinline></video>
+                <video id="vid1d" class="vid-hidden" src="/videos/daniela_video_detected.mp4" autoplay muted loop
+                  playsinline></video>
               </div>
             </div>
             <div class="video-card">
               <h3>Video 2</h3>
               <div class="video-wrap">
                 <video id="vid2" src="/videos/chino_video.mp4" autoplay muted loop playsinline></video>
-                <video id="vid2d" class="vid-hidden" src="/videos/chino_video_detected.mp4" autoplay muted loop playsinline></video>
+                <video id="vid2d" class="vid-hidden" src="/videos/chino_video_detected.mp4" autoplay muted loop
+                  playsinline></video>
               </div>
             </div>
           </div>
 
           <!-- AI Pipeline Diagram -->
-          <div style="background:linear-gradient(135deg,#0d1420 0%,#0a1628 50%,#0d1420 100%);border:1px solid #00d2ff33;border-radius:12px;padding:2rem 2rem 1.8rem;margin-top:1.2rem;text-align:center;position:relative;overflow:hidden;">
+          <div
+            style="background:linear-gradient(135deg,#0d1420 0%,#0a1628 50%,#0d1420 100%);border:1px solid #00d2ff33;border-radius:12px;padding:2rem 2rem 1.8rem;margin-top:1.2rem;text-align:center;position:relative;overflow:hidden;">
             <!-- Glow effect top -->
-            <div style="position:absolute;top:-40px;left:50%;transform:translateX(-50%);width:200px;height:80px;background:radial-gradient(ellipse,rgba(0,210,255,0.15),transparent);pointer-events:none;"></div>
+            <div
+              style="position:absolute;top:-40px;left:50%;transform:translateX(-50%);width:200px;height:80px;background:radial-gradient(ellipse,rgba(0,210,255,0.15),transparent);pointer-events:none;">
+            </div>
 
-            <div style="font-size:0.7rem;color:#00d2ff;text-transform:uppercase;letter-spacing:3px;margin-bottom:0.3rem;">Powered by</div>
-            <div style="font-size:1.6rem;font-weight:bold;color:#fff;letter-spacing:2px;margin-bottom:0.2rem;">SpaceSheeps AI Engine</div>
-            <div style="font-size:0.85rem;color:#6b7b8d;margin-bottom:1.5rem;">Our AI watches the sky for you and spots satellites automatically</div>
+            <div
+              style="font-size:0.7rem;color:#00d2ff;text-transform:uppercase;letter-spacing:3px;margin-bottom:0.3rem;">
+              Powered by</div>
+            <div style="font-size:1.6rem;font-weight:bold;color:#fff;letter-spacing:2px;margin-bottom:0.2rem;">
+              SpaceSheeps AI Engine</div>
+            <div style="font-size:0.85rem;color:#6b7b8d;margin-bottom:1.5rem;">Our AI watches the sky for you and spots
+              satellites automatically</div>
 
             <!-- Pipeline -->
-            <div style="display:flex;align-items:center;justify-content:center;gap:0.6rem;flex-wrap:wrap;margin-bottom:1.5rem;">
-              <div style="background:#111927;border:1px solid #1e2a3a;border-radius:8px;padding:0.8rem 1.2rem;min-width:100px;">
+            <div
+              style="display:flex;align-items:center;justify-content:center;gap:0.6rem;flex-wrap:wrap;margin-bottom:1.5rem;">
+              <div
+                style="background:#111927;border:1px solid #1e2a3a;border-radius:8px;padding:0.8rem 1.2rem;min-width:100px;">
                 <div style="font-size:1.8rem;">📹</div>
                 <div style="font-size:0.8rem;color:#c8d6e5;margin-top:0.3rem;font-weight:bold;">Video Feed</div>
                 <div style="font-size:0.6rem;color:#6b7b8d;margin-top:0.1rem;">Live camera footage</div>
               </div>
               <div style="color:#00d2ff;font-size:1.5rem;">&#9654;</div>
-              <div style="background:#111927;border:1px solid #00d2ff55;border-radius:8px;padding:0.8rem 1.2rem;min-width:100px;box-shadow:0 0 20px rgba(0,210,255,0.08);">
+              <div
+                style="background:#111927;border:1px solid #00d2ff55;border-radius:8px;padding:0.8rem 1.2rem;min-width:100px;box-shadow:0 0 20px rgba(0,210,255,0.08);">
                 <div style="font-size:1.8rem;">🧠</div>
                 <div style="font-size:0.8rem;color:#00d2ff;margin-top:0.3rem;font-weight:bold;">AI Brain</div>
                 <div style="font-size:0.6rem;color:#6b7b8d;margin-top:0.1rem;">Analyzes every frame</div>
               </div>
               <div style="color:#00d2ff;font-size:1.5rem;">&#9654;</div>
-              <div style="background:#111927;border:1px solid #1e2a3a;border-radius:8px;padding:0.8rem 1.2rem;min-width:100px;">
+              <div
+                style="background:#111927;border:1px solid #1e2a3a;border-radius:8px;padding:0.8rem 1.2rem;min-width:100px;">
                 <div style="font-size:1.8rem;">🎯</div>
                 <div style="font-size:0.8rem;color:#c8d6e5;margin-top:0.3rem;font-weight:bold;">Detection</div>
                 <div style="font-size:0.6rem;color:#6b7b8d;margin-top:0.1rem;">Finds and marks satellites</div>
               </div>
               <div style="color:#00d2ff;font-size:1.5rem;">&#9654;</div>
-              <div style="background:linear-gradient(135deg,#0a1a2a,#0d2235);border:1px solid #00d2ff;border-radius:8px;padding:0.8rem 1.2rem;min-width:100px;box-shadow:0 0 25px rgba(0,210,255,0.15);">
+              <div
+                style="background:linear-gradient(135deg,#0a1a2a,#0d2235);border:1px solid #00d2ff;border-radius:8px;padding:0.8rem 1.2rem;min-width:100px;box-shadow:0 0 25px rgba(0,210,255,0.15);">
                 <div style="font-size:1.8rem;">📡</div>
                 <div style="font-size:0.8rem;color:#00d2ff;margin-top:0.3rem;font-weight:bold;">Alert</div>
                 <div style="font-size:0.6rem;color:#6b7b8d;margin-top:0.1rem;">Warns you instantly</div>
@@ -624,21 +751,83 @@
               </div>
               <div>
                 <div style="font-size:1.4rem;font-weight:bold;color:#00d2ff;">30 FPS</div>
-                <div style="font-size:0.65rem;color:#6b7b8d;text-transform:uppercase;letter-spacing:1px;">Real-time</div>
+                <div style="font-size:0.65rem;color:#6b7b8d;text-transform:uppercase;letter-spacing:1px;">Real-time
+                </div>
               </div>
               <div>
                 <div style="font-size:1.4rem;font-weight:bold;color:#00d2ff;">6.2 MB</div>
-                <div style="font-size:0.65rem;color:#6b7b8d;text-transform:uppercase;letter-spacing:1px;">Lightweight</div>
+                <div style="font-size:0.65rem;color:#6b7b8d;text-transform:uppercase;letter-spacing:1px;">Lightweight
+                </div>
               </div>
               <div>
                 <div style="font-size:1.4rem;font-weight:bold;color:#00d2ff;">GPU/CPU</div>
-                <div style="font-size:0.65rem;color:#6b7b8d;text-transform:uppercase;letter-spacing:1px;">Runs anywhere</div>
+                <div style="font-size:0.65rem;color:#6b7b8d;text-transform:uppercase;letter-spacing:1px;">Runs anywhere
+                </div>
               </div>
             </div>
 
             <!-- CTA -->
-            <a href="/models/yolov8_satellite.pt" download class="btn" style="display:inline-block;flex:none;padding:0.7rem 2.5rem;text-decoration:none;font-size:0.95rem;letter-spacing:2px;box-shadow:0 0 30px rgba(0,210,255,0.3);border-radius:6px;">Download AI Model</a>
-            <div style="font-size:0.65rem;color:#4a5a6a;margin-top:0.6rem;">Free &middot; Open source &middot; Ready to use</div>
+            <a href="/models/yolov8_satellite.pt" download class="btn"
+              style="display:inline-block;flex:none;padding:0.7rem 2.5rem;text-decoration:none;font-size:0.95rem;letter-spacing:2px;box-shadow:0 0 30px rgba(0,210,255,0.3);border-radius:6px;">Download
+              AI Model</a>
+            <div style="font-size:0.65rem;color:#4a5a6a;margin-top:0.6rem;">Free &middot; Open source &middot; Ready to
+              use</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Camera View -->
+      <div id="view-camera" class="view">
+        <div class="camera-container"
+          style="display:flex;flex-direction:column;align-items:center;justify-content:flex-start;height:100%;padding:1.5rem;overflow-y:auto;">
+          <div class="camera-header" style="margin-bottom:1rem;text-align:center;">
+            <h2
+              style="color:#00d2ff;font-size:1.3rem;letter-spacing:2px;text-transform:uppercase;margin-bottom:0.5rem;">
+              AI Camera Detection</h2>
+            <p style="color:#6b7b8d;font-size:0.85rem;">Real-time satellite detection using SpaceSheeps AI</p>
+          </div>
+
+          <!-- AI Camera Feed -->
+          <div id="aiCameraWrap" class="camera-wrap"
+            style="position:relative;max-width:900px;width:100%;min-height:500px;background:#111927;border:2px solid #00d2ff;border-radius:12px;overflow:hidden;box-shadow:0 0 40px rgba(0,210,255,0.25);">
+            <img id="aiCameraFeed" src="" alt="AI Camera Feed"
+              style="width:100%;height:100%;min-height:500px;display:none;background:#0a0e17;object-fit:contain;">
+            <div id="aiCameraPlaceholder"
+              style="position:absolute;top:0;left:0;right:0;bottom:0;display:flex;flex-direction:column;align-items:center;justify-content:center;background:#0d1420;">
+              <div style="font-size:3rem;margin-bottom:0.8rem;">�️</div>
+              <p style="color:#6b7b8d;font-size:0.95rem;margin-bottom:0.5rem;">AI Camera Feed</p>
+              <p
+                style="color:#4a5a6a;font-size:0.8rem;margin-bottom:1rem;text-align:center;padding:0 1rem;max-width:400px;">
+                Start the server with camera enabled, then click the button below.
+              </p>
+              <code
+                style="color:#00d2ff;background:#0a0e17;padding:0.5rem 1rem;border-radius:4px;margin-bottom:1rem;font-size:0.8rem;">python landing/server.py --camera 0</code>
+              <button class="btn" id="connectAiBtn" style="flex:none;padding:0.6rem 2rem;font-size:0.9rem;">Connect to
+                Camera</button>
+            </div>
+            <div id="aiCameraError"
+              style="display:none;position:absolute;top:0;left:0;right:0;bottom:0;display:flex;flex-direction:column;align-items:center;justify-content:center;background:#0d1420;">
+              <div style="font-size:2.5rem;margin-bottom:0.8rem;">⚠️</div>
+              <p style="color:#ff4444;font-size:0.9rem;text-align:center;padding:0 1rem;max-width:400px;"
+                id="aiCameraErrorMsg">Cannot connect. Make sure server is running with --camera flag.</p>
+              <button class="btn btn-secondary" id="retryAiBtn"
+                style="flex:none;margin-top:1rem;padding:0.5rem 1.5rem;">Retry</button>
+            </div>
+            <!-- AI Mode Badge -->
+            <div id="aiBadge"
+              style="display:none;position:absolute;top:10px;right:10px;background:rgba(0,210,255,0.9);color:#0a0e17;padding:0.3rem 0.8rem;border-radius:4px;font-size:0.7rem;font-weight:bold;letter-spacing:1px;">
+              AI DETECTION ACTIVE
+            </div>
+          </div>
+
+          <div class="camera-controls"
+            style="display:flex;gap:1rem;margin-top:1rem;flex-wrap:wrap;justify-content:center;">
+            <button class="btn btn-secondary" id="disconnectCameraBtn"
+              style="display:none;padding:0.5rem 1.5rem;">Disconnect</button>
+          </div>
+          <div style="margin-top:1rem;text-align:center;max-width:600px;">
+            <p style="color:#4a5a6a;font-size:0.75rem;">The AI processes your camera feed in real-time, detecting
+              satellites and space debris.</p>
           </div>
         </div>
       </div>
@@ -703,6 +892,76 @@
         vid2.classList.remove('vid-hidden');
         vid2d.classList.add('vid-hidden');
       }
+    }
+  </script>
+
+  <!-- Camera functionality -->
+  <script>
+    // =========================================================================
+    // AI CAMERA FEED
+    // =========================================================================
+    const AI_STREAM_URL = '/camera_feed';
+
+    document.getElementById('connectAiBtn').addEventListener('click', connectToCamera);
+    document.getElementById('retryAiBtn').addEventListener('click', connectToCamera);
+    document.getElementById('disconnectCameraBtn').addEventListener('click', disconnectCamera);
+
+    function connectToCamera() {
+      const aiImg = document.getElementById('aiCameraFeed');
+      const placeholder = document.getElementById('aiCameraPlaceholder');
+      const errorDiv = document.getElementById('aiCameraError');
+      const badge = document.getElementById('aiBadge');
+      const disconnectBtn = document.getElementById('disconnectCameraBtn');
+
+      // Show loading state
+      errorDiv.style.display = 'none';
+      placeholder.innerHTML = '<div style="font-size:2rem;margin-bottom:1rem;">⏳</div><p style="color:#00d2ff;">Connecting to camera...</p>';
+
+      // Handle error
+      aiImg.onerror = function () {
+        aiImg.style.display = 'none';
+        placeholder.style.display = 'none';
+        errorDiv.style.display = 'flex';
+        badge.style.display = 'none';
+        disconnectBtn.style.display = 'none';
+      };
+
+      // Handle success
+      aiImg.onload = function () {
+        placeholder.style.display = 'none';
+        errorDiv.style.display = 'none';
+        aiImg.style.display = 'block';
+        badge.style.display = 'block';
+        disconnectBtn.style.display = 'inline-block';
+      };
+
+      // Set the stream URL
+      aiImg.src = AI_STREAM_URL + '?t=' + Date.now();
+    }
+
+    function disconnectCamera() {
+      const aiImg = document.getElementById('aiCameraFeed');
+      const placeholder = document.getElementById('aiCameraPlaceholder');
+      const errorDiv = document.getElementById('aiCameraError');
+      const badge = document.getElementById('aiBadge');
+      const disconnectBtn = document.getElementById('disconnectCameraBtn');
+
+      aiImg.src = '';
+      aiImg.style.display = 'none';
+      badge.style.display = 'none';
+      disconnectBtn.style.display = 'none';
+      errorDiv.style.display = 'none';
+
+      placeholder.innerHTML = `
+        <div style="font-size:3rem;margin-bottom:0.8rem;">🛰️</div>
+        <p style="color:#6b7b8d;font-size:0.95rem;margin-bottom:0.5rem;">AI Camera Feed</p>
+        <p style="color:#4a5a6a;font-size:0.8rem;margin-bottom:1rem;text-align:center;padding:0 1rem;max-width:400px;">
+          Start the server with camera enabled, then click the button below.
+        </p>
+        <code style="color:#00d2ff;background:#0a0e17;padding:0.5rem 1rem;border-radius:4px;margin-bottom:1rem;font-size:0.8rem;">python landing/server.py --camera 0</code>
+        <button class="btn" id="connectAiBtn" style="flex:none;padding:0.6rem 2rem;font-size:0.9rem;" onclick="connectToCamera()">Connect to Camera</button>
+      `;
+      placeholder.style.display = 'flex';
     }
   </script>
 
@@ -1130,12 +1389,12 @@
       ctx.fillStyle = 'rgba(30, 42, 58, 0.2)';
       ctx.lineWidth = 1;
       const continents = [
-        [{lat:70,lon:-170},{lat:50,lon:-140},{lat:30,lon:-120},{lat:20,lon:-100},{lat:10,lon:-80},{lat:15,lon:-70},{lat:45,lon:-60},{lat:60,lon:-80},{lat:70,lon:-100}],
-        [{lat:10,lon:-80},{lat:0,lon:-75},{lat:-20,lon:-70},{lat:-40,lon:-70},{lat:-55,lon:-68},{lat:-40,lon:-60},{lat:-20,lon:-50},{lat:0,lon:-50},{lat:10,lon:-60}],
-        [{lat:70,lon:20},{lat:60,lon:10},{lat:45,lon:-10},{lat:35,lon:-10},{lat:35,lon:30},{lat:45,lon:40},{lat:60,lon:40},{lat:70,lon:30}],
-        [{lat:35,lon:-10},{lat:10,lon:-15},{lat:-35,lon:20},{lat:-35,lon:50},{lat:10,lon:50},{lat:30,lon:30}],
-        [{lat:70,lon:40},{lat:60,lon:60},{lat:70,lon:100},{lat:60,lon:140},{lat:40,lon:140},{lat:20,lon:120},{lat:10,lon:100},{lat:20,lon:70},{lat:35,lon:50}],
-        [{lat:-10,lon:115},{lat:-35,lon:115},{lat:-40,lon:140},{lat:-35,lon:150},{lat:-10,lon:145}]
+        [{ lat: 70, lon: -170 }, { lat: 50, lon: -140 }, { lat: 30, lon: -120 }, { lat: 20, lon: -100 }, { lat: 10, lon: -80 }, { lat: 15, lon: -70 }, { lat: 45, lon: -60 }, { lat: 60, lon: -80 }, { lat: 70, lon: -100 }],
+        [{ lat: 10, lon: -80 }, { lat: 0, lon: -75 }, { lat: -20, lon: -70 }, { lat: -40, lon: -70 }, { lat: -55, lon: -68 }, { lat: -40, lon: -60 }, { lat: -20, lon: -50 }, { lat: 0, lon: -50 }, { lat: 10, lon: -60 }],
+        [{ lat: 70, lon: 20 }, { lat: 60, lon: 10 }, { lat: 45, lon: -10 }, { lat: 35, lon: -10 }, { lat: 35, lon: 30 }, { lat: 45, lon: 40 }, { lat: 60, lon: 40 }, { lat: 70, lon: 30 }],
+        [{ lat: 35, lon: -10 }, { lat: 10, lon: -15 }, { lat: -35, lon: 20 }, { lat: -35, lon: 50 }, { lat: 10, lon: 50 }, { lat: 30, lon: 30 }],
+        [{ lat: 70, lon: 40 }, { lat: 60, lon: 60 }, { lat: 70, lon: 100 }, { lat: 60, lon: 140 }, { lat: 40, lon: 140 }, { lat: 20, lon: 120 }, { lat: 10, lon: 100 }, { lat: 20, lon: 70 }, { lat: 35, lon: 50 }],
+        [{ lat: -10, lon: 115 }, { lat: -35, lon: 115 }, { lat: -40, lon: 140 }, { lat: -35, lon: 150 }, { lat: -10, lon: 145 }]
       ];
       continents.forEach(c => {
         ctx.beginPath();
@@ -1207,8 +1466,8 @@
         const th = Math.random() * Math.PI * 2;
         const ph = Math.acos(2 * Math.random() - 1);
         starPos[i] = r * Math.sin(ph) * Math.cos(th);
-        starPos[i+1] = r * Math.sin(ph) * Math.sin(th);
-        starPos[i+2] = r * Math.cos(ph);
+        starPos[i + 1] = r * Math.sin(ph) * Math.sin(th);
+        starPos[i + 2] = r * Math.cos(ph);
       }
       starGeo.setAttribute('position', new THREE.BufferAttribute(starPos, 3));
       globeScene.add(new THREE.Points(starGeo, new THREE.PointsMaterial({ color: 0xffffff, size: 2, sizeAttenuation: false })));
@@ -1221,7 +1480,7 @@
 
       new THREE.TextureLoader().load('textures/earth_day.jpg',
         tex => { earthMesh.material.map = tex; earthMesh.material.needsUpdate = true; },
-        undefined, () => {});
+        undefined, () => { });
 
       // Atmosphere
       const atmosGeo = new THREE.SphereGeometry(EARTH_RADIUS_KM * 1.01, 64, 64);
@@ -1337,4 +1596,5 @@
     });
   </script>
 </body>
+
 </html>
